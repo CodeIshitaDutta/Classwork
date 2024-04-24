@@ -7,3 +7,6 @@
 [submodule "R_Code/Coursera_Practice"]
 	path = R_Code/Coursera_Practice
 	url = https://github.com/CodeIshitaDutta/datasciencecoursera.git
+[submodule "Python/Coursera/Google_Certified_Data_Scientist"]
+	path = Python/Coursera/Google_Certified_Data_Scientist
+	url = https://github.com/CodeIshitaDutta/certifications.git
