@@ -1,0 +1,312 @@
+\documentclass[11pt]{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% MATH 167 CRN 30790
+% WINTER QUARTER 2022
+
+
+% Created by Xiaotie Chen, April 9th 2021
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%% Load General Packages %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{amsmath,amssymb,amsthm,fullpage}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{subfigure}
+
+\usepackage{float}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%% Set Up Page Parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Please refer to Prof. Puckett 's template for explanations
+
+\setlength{\textheight}{ 620 pt}
+\setlength{\voffset}{-20 pt}
+\setlength{\headsep}{12 pt}
+\setlength{\headheight}{14 pt}
+\setlength{\topskip}{12 pt}
+\setlength{\footskip}{30 pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% SET HEADERS AND FOOTERS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% "L" stands for "Left", "C" for "Centered", "R" for "Right", "O" for Odd and "E" for Even page
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead{}
+
+\fancyhead[L]{\textbf{NAME: Ishita Dutta}} % TYPE YOUR NAME HERE!
+\fancyhead[C]{\textbf{HW 01}}              % TYPE THE ASSGNMENT NAME HERE!
+\fancyhead[R]{\textbf{SID: 918193342}}     % TYPE YOUR STUDENT ID HERE!
+
+\fancyfoot[L]{CRN 38665}
+\fancyfoot[C]{--~\thepage~--}
+\fancyfoot[R]{\today}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% START DOCUMENT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+ % Create a numbered list
+
+ \begin{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %%%%%%%% Problem 1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    % Always indent your code whether it's LaTeX or Matlab. It make is easier and clearer to
+    % read, and this leads to fewer mistakes. I always use 2 spaces. I think Overleaf uses
+    % 4 spaces for LaTeX code.
+
+    \item \label{Problem_01} (50 pts)
+
+      % Create a list at the inside Problem 01. By default it will be labeled with lowercase
+      % letters (a), (b) ...
+
+      \begin{enumerate}
+
+        \item If you want to write some math equations in \LaTeX, you can use
+          $$ A=QR. $$ or
+          \begin{equation*}
+            A = QR.
+          \end{equation*}
+
+          Note that these equations are `broken out' in the sense that they do not appear
+          in the sentence but separately in their own place on the page.
+
+          \vskip 06pt
+
+          Also note that your can use two dollar signs at the beginning and again at the
+          end of a `broken out' equation like this
+          \begin{verbatim}
+            $$ A = QR. $$
+          \end{verbatim}
+           as shorthand for
+          \begin{verbatim}
+            \begin{equation*}
+              A = QR.
+            \end{equation*}
+          \end{verbatim}
+          Both equations typeset the same way.
+
+          \vskip 06pt
+
+          If you only want to write some simple expressions in line, you can use $A=QR$ .
+
+        \item You should always use boldface for vectors to distinguish them from scalars.
+          For example,
+          $$
+            \mathbf{v}= [v_1, v_2, v_3],
+          $$
+          here $\mathbf{v}$ is a vector in $\mathbf{R}^3$, and $v_1, v_2, v_3$ are scalars.
+
+         \vskip 06pt
+        Use capital letters for matrices and boldface lower-case letters for vectors.
+
+        Have you noticed that we are staring a new paragraph using
+        $\backslash\text{vskip~06pt}$?
+        However, you do not have to use  $\backslash\text{vskip~06pt}$ everywhere, just when
+        you want to force \LaTeX~to make a paragraph with a 06 points of space between the
+        paragraphs. (72 points or 72pt = 01 inch)
+
+        \vskip 06pt
+
+        \item You can code the pseudoinverse of a matrix A with: $A^\dagger$. To represent
+        the transpose simply use $A^T$.  To write $x$ to the power $n$ use $x^n$.  You can
+        replace $n$ with any number, but if there is more than one digit use curly braces;
+        e.g., like this $x^{-1}$ or this $x^{23}$.  You can replace the scalar $x$ with a
+        vector too (e.g. $\mathbf{v}^T$) or any other mathematical symbol you want.
+
+        \vskip 06pt
+
+        \item Here is how you can represent a matrix or a column vector in \LaTeX:
+           \begin{equation*}
+               A = \begin{bmatrix}
+                         1 & 2
+                         0 & 0
+                   \end{bmatrix}  ,
+               \mathbf{b} = \begin{bmatrix}
+                         1
+                         0
+                   \end{bmatrix}
+           \end{equation*}
+
+        \vskip 06pt
+        \item Note: if you want to type braces, use \{ \}
+
+        \vskip 06pt
+             \item Type your answer for Part f) of Problem 1 here
+
+        \end{enumerate}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %%%%%%%% Problem 2
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    \item \label{Problem_02} (15 pts)
+
+        \begin{enumerate}
+
+             \item Type your answer for Part a) of Problem 2 here
+
+             \vskip 06pt
+             \item Type your answer for Part b) of Problem 2 here
+
+             \vskip 06pt
+             \item Type your answer for Part c) of Problem 2 here
+
+        \end{enumerate}
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %%%%%%%% Problem 3
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    \item \label{Problem_03} (65 pts)
+
+        \begin{enumerate}
+
+
+             \item Reminder: always use BOLDFACE for vectors! For example, given
+             $$
+                A= [\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3, \mathbf{a}_4],
+             $$
+             you should use boldface for $\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3, \mathbf{a}_4$ as they are column VECTORS of matrix $A$.
+
+             \vskip 06pt
+             \item Type your answer for Part b) of Problem 3 here
+
+             \vskip 06pt
+             \item Type your answer for Part c) of Problem 3 here
+
+             \vskip 06pt
+             \item Type your answer for Part d) of Problem 3 here
+
+             \vskip 06pt
+             \item Please Upload your MATLAB code for part e) to CANVAS. Check your Assignment files on detailed instructions. You do not need to type anything for Part e) of Problem 3
+
+        \end{enumerate}
+
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %%%%%%%% Problem 4
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    \item \label{Problem_04} (50 pts)
+
+      \begin{enumerate}
+
+      \item Type your answer for Part a) of Problem 4 here
+
+        \vskip 06pt
+        \item Type your answer for Part b) of Problem 4 here
+
+        \vskip 06pt
+        \item Type your answer for Part c) of Problem 4 here
+
+        \vskip 06pt
+        \item Type your answer for Part d) of Problem 4 here
+
+        \vskip 06pt
+        \item Type your answer for Part e) of Problem 4 here
+
+        \vskip 06pt
+        \item Type your answer for Part f) of Problem 4 here
+
+        \vskip 06pt
+        \item Type your answer for Part g) of Problem 4 here
+
+        \vskip 06pt
+        \item Type your answer for Part h) of Problem 4 here
+
+        \vskip 06pt
+        \item Type your answer for Part i) of Problem 4 here
+
+        \vskip 06pt
+        \item Type your answer for Part j) of Problem 4 here
+
+      \end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %%%%%%%% Problem 5
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    \item \label{Problem_05} (30 pts)
+
+        Type your answer for Problem 5 here
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %%%%%%%% Problem 6
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    \item \label{Problem_06} (30 pts)
+
+        \begin{enumerate}
+
+             \item Type your answer for Part a) of Problem 6 here
+
+             \vskip 06pt
+             \item Type your answer for Part b) of Problem 6 here
+
+
+        \end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %%%%%%%% Problem 7
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    \item \label{Problem_07} (30 pts)
+
+        \begin{enumerate}
+
+             \item Type your answer for Part a) of Problem 7 here
+
+             \vskip 06pt
+             \item Type your answer for Part b) of Problem 7 here
+
+             \vskip 06pt
+             \item Type your answer for Part c) of Problem 7 here
+
+             \vskip 06pt
+             \item Type your answer for Part d) of Problem 7 here
+
+        \end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %%%%%%%% Problem 8
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    \item \label{Problem_08} (25 pts)
+
+        \begin{enumerate}
+
+             \item Type your answer for Part a) of Problem 8 here
+
+             \vskip 06pt
+             \item Type your answer for Part b) of Problem 8 here
+
+             \vskip 06pt
+             \item Type your answer for Part c) of Problem 8 here
+
+             \vskip 06pt
+             \item Type your answer for Part d) of Problem 8 here
+
+        \end{enumerate}
+
+
+\end{enumerate}
+
+\end{document}
