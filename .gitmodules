@@ -1,0 +1,3 @@
+[submodule "Python/UCD_BS_Statistics/ECS_171/ECS171_Spotify_Addition_Recommendations"]
+	path = Python/UCD_BS_Statistics/ECS_171/ECS171_Spotify_Addition_Recommendations
+	url = https://github.com/CodeIshitaDutta/ECS171_Spotify_Addition_Recommendations.git

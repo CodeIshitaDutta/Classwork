@@ -1,0 +1,311 @@
+---
+title: "STA 160 Midterm"
+author: "Tyler Van Fleet Kingery"
+date: "4/26/2022"
+output: pdf_document
+---
+
+```{r}
+Kine_data = read.csv('Kinematics_Data.csv')
+Kine_data
+```
+
+```{r}
+colnames(Kine_data)
+```
+
+
+```{r}
+max(Kine_data$acceleration_x)
+```
+
+# Main
+```{r}
+kine_run = subset(Kine_data, activity == 1)
+kine_walk = subset(Kine_data, activity == 0)
+kine_left = subset(Kine_data, wrist == 0)
+kine_right = subset(Kine_data, wrist == 1)
+```
+
+
+
+# Max and min of the 4 subsets
+```{r}
+max(kine_run$acceleration_x)
+min(kine_run$acceleration_x)
+
+max(kine_walk$acceleration_x)
+min(kine_walk$acceleration_x)
+
+max(kine_left$acceleration_x)
+min(kine_left$acceleration_x)
+
+max(kine_right$acceleration_x)
+min(kine_right$acceleration_x)
+
+```
+
+# Run
+```{r}
+kine_run$cat_acc_x = cut(kine_run$acceleration_x,
+                      breaks=c(-6,-5,-4,-3,-2,-0.75,0.7,2,3,4,5,6),
+                      labels=c('-6 to -5',
+                               '-5 to -4',
+                               '-4 to -3',
+                               '-3 to -2',
+                               '-2 to -0.75',
+                               '-0.75 to 0.7',
+                               '0.7 to 2',
+                               '2 to 3',
+                               '3 to 4',
+                               '4 to 5',
+                               '5 to 6'))
+
+kine_run$cat_acc_y = cut(kine_run$acceleration_y,
+                      breaks=c(-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6),
+                      labels=c('-6 to -5',
+                               '-5 to -4',
+                               '-4 to -3',
+                               '-3 to -2',
+                               '-2 to -1',
+                               '-1 to 0',
+                               '0 to 1',
+                               '1 to 2',
+                               '2 to 3',
+                               '3 to 4',
+                               '4 to 5',
+                               '5 to 6'))
+
+kine_run$cat_acc_z = cut(kine_run$acceleration_z,
+                      breaks=c(-6,-5,-4,-3,-1.55,-1,0,1,2,3,4,5,6),
+                      labels=c('-6 to -5',
+                               '-5 to -4',
+                               '-4 to -3',
+                               '-3 to -1.55',
+                               '-1.55 to -1',
+                               '-1 to 0',
+                               '0 to 1',
+                               '1 to 2',
+                               '2 to 3',
+                               '3 to 4',
+                               '4 to 5',
+                               '5 to 6'))
+
+table(kine_run$cat_acc_x,kine_run$wrist) #x_acceleration vs running
+table(kine_run$cat_acc_y,kine_run$wrist) #y_acceleration vs running
+table(kine_run$cat_acc_z,kine_run$wrist) #z_acceleration vs running
+```
+
+
+
+# Walk
+```{r}
+kine_walk$cat_acc_x = cut(kine_walk$acceleration_x,
+                      breaks=c(-2,-1,-0.05,0.2,1,2),
+                      labels=c('-2 to -1',
+                               '-1 to -0.05',
+                               '-0.05 to 0.2',
+                               '0.2 to 1',
+                               '1 to 2'))
+
+kine_walk$cat_acc_y = cut(kine_walk$acceleration_y,
+                      breaks=c(-3,-2,-1,0,1),
+                      labels=c('-3 to -2',
+                               '-2 to -1',
+                               '-1 to 0',
+                               '0 to 1'))
+
+kine_walk$cat_acc_z = cut(kine_walk$acceleration_z,
+                      breaks=c(-2,-1,-0.5,0.2,1),
+                      labels=c('-2 to -1',
+                               '-1 to -0.5',
+                               '-0.5 to 0.1',
+                               '0.2 to 1'))
+
+table(kine_walk$cat_acc_x,kine_walk$wrist) #x_acceleration vs walking
+table(kine_walk$cat_acc_y,kine_walk$wrist) #y_acceleration vs walking
+table(kine_walk$cat_acc_z,kine_walk$wrist) #z_acceleration vs walking
+```
+
+
+# Left Wrist
+```{r}
+kine_left$cat_acc_x = cut(kine_left$acceleration_x,
+                      breaks=c(-6,-5,-4,-3,-2,-1, 0, 0.7, 1,2,3,4,5,6),
+                      labels=c('-6 to -5',
+                               '-5 to -4',
+                               '-4 to -3',
+                               '-3 to -2',
+                               '-2 to -1',
+                               '-1 to 0',
+                               '0 to 0.7',
+                               '0.7 to 1',
+                               '1 to 2',
+                               '2 to 3',
+                               '3 to 4',
+                               '4 to 5',
+                               '5 to 6'))
+
+kine_left$cat_acc_y = cut(kine_left$acceleration_y,
+                      breaks=c(-6,-5,-4,-3,-2,-1.7, 0,1,2,3,4,5,6),
+                      labels=c('-6 to -5',
+                               '-5 to -4',
+                               '-4 to -3',
+                               '-3 to -2',
+                               '-2 to -1.7',
+                               '-1.7 to 0',
+                               '0 to 1',
+                               '1 to 2',
+                               '2 to 3',
+                               '3 to 4',
+                               '4 to 5',
+                               '5 to 6'))
+kine_left$cat_acc_z = cut(kine_left$acceleration_z,
+                      breaks=c(-6,-5,-4,-3,-2,-0.5,0.1, 0.2, 1,2,3,4,5,6),
+                      labels=c('-6 to -5',
+                               '-5 to -4',
+                               '-4 to -3',
+                               '-3 to -2',
+                               '-2 to -0.5',
+                               '-0.5 to 0.1',
+                               '0.1 to 0.2',
+                               '0.2 to 1',
+                               '1 to 2',
+                               '2 to 3',
+                               '3 to 4',
+                               '4 to 5',
+                               '5 to 6'))
+
+table(kine_left$cat_acc_x,kine_left$activity) #x_acceleration vs left wrist
+table(kine_left$cat_acc_y,kine_left$activity) #y_acceleration vs left wrist
+table(kine_left$cat_acc_z,kine_left$activity) #z_acceleration vs left wrist
+```
+
+#Right Wrist
+```{r}
+kine_right$cat_acc_x = cut(kine_right$acceleration_x,
+                      breaks=c(-6,-5,-4,-3,-2,-1,-0.7, 0.1,1,2,3,4,5,6),
+                      labels=c('-6 to -5',
+                               '-5 to -4',
+                               '-4 to -3',
+                               '-3 to -2',
+                               '-2 to -1',
+                               '-1 to -0.7',
+                               '-0.7 to 0.1',
+                               '0.1 to 1',
+                               '1 to 2',
+                               '2 to 3',
+                               '3 to 4',
+                               '4 to 5',
+                               '5 to 6'))
+
+kine_right$cat_acc_y = cut(kine_right$acceleration_y,
+                      breaks=c(-6,-5,-4,-3,-2,-1.4,0,1,2,3,4,5,6),
+                      labels=c('-6 to -5',
+                               '-5 to -4',
+                               '-4 to -3',
+                               '-3 to -2',
+                               '-2 to -1.4',
+                               '-1.4 to 0',
+                               '0 to 1',
+                               '1 to 2',
+                               '2 to 3',
+                               '3 to 4',
+                               '4 to 5',
+                               '5 to 6'))
+
+kine_right$cat_acc_z = cut(kine_right$acceleration_z,
+                      breaks=c(-6,-5,-4,-3,-2,-1,0.15,1,2,3,4,5,6),
+                      labels=c('-6 to -5',
+                               '-5 to -4',
+                               '-4 to -3',
+                               '-3 to -2',
+                               '-2 to -1',
+                               '-1 to 0.15',
+                               '0.15 to 1',
+                               '1 to 2',
+                               '2 to 3',
+                               '3 to 4',
+                               '4 to 5',
+                               '5 to 6'))
+
+table(kine_right$cat_acc_x,kine_right$activity) #x_acceleration vs right wrist
+table(kine_right$cat_acc_y,kine_right$activity) #y_acceleration vs right wrist
+table(kine_right$cat_acc_z,kine_right$activity) #z_acceleration vs right wrist
+```
+
+
+# overall
+
+Contingency tables for wrist vs acceleration
+```{r}
+Kine_data$cat_acc_x = cut(Kine_data$acceleration_x,
+                      breaks=c(-6,-4,-2,-0.75,0.7,2,4,6),
+                      labels=c('-6 to -4',
+                               '-4 to -2',
+                               '-2 to -0.75',
+                               '-0.75 to 0.7',
+                               '0.7 to 2',
+                               '2 to 4',
+                               '4 to 6'))
+
+Kine_data$cat_acc_y = cut(Kine_data$acceleration_y,
+                      breaks=c(-6,-4,-2,0,2,4,6),
+                      labels=c('-6 to -4',
+                               '-4 to -2',
+                               '-2 to 0',
+                               '0 to 2',
+                               '2 to 4',
+                               '4 to 6'))
+
+Kine_data$cat_acc_z = cut(Kine_data$acceleration_z,
+                      breaks=c(-6,-4,-1.5,0,2,4,6),
+                      labels=c('-6 to -4',
+                               '-4 to -1.5',
+                               '-1.5 to 0',
+                               '0 to 2',
+                               '2 to 4',
+                               '4 to 6'))
+
+table(Kine_data$cat_acc_x,Kine_data$wrist) #x_acceleration vs wrist
+table(Kine_data$cat_acc_y,Kine_data$wrist) #y_acceleration vs wrist
+table(Kine_data$cat_acc_z,Kine_data$wrist) #z_acceleration vs wrist
+```
+
+Contingency tables for activity vs acceleration
+```{r}
+Kine_data$cat_acc_x = cut(Kine_data$acceleration_x,
+                      breaks=c(-6,-4,-2,-0.75,0.75,2,4,6),
+                      labels=c('-6 to -4',
+                               '-4 to -2',
+                               '-2 to -0.75',
+                               '-0.75 to 0.75',
+                               '0.75 to 2',
+                               '2 to 4',
+                               '4 to 6'))
+
+Kine_data$cat_acc_y = cut(Kine_data$acceleration_y,
+                      breaks=c(-6,-4,-2,-1.7,-0.1,2,4,6),
+                      labels=c('-6 to -4',
+                               '-4 to -2',
+                               '-2 to -1.7',
+                               '-1.7 to -0.1',
+                               '-0.1 to 2',
+                               '2 to 4',
+                               '4 to 6'))
+
+Kine_data$cat_acc_z = cut(Kine_data$acceleration_z,
+                      breaks=c(-6,-4,-2,-0.7,0.3,2,4,6),
+                      labels=c('-6 to -4',
+                               '-4 to -2',
+                               '-2 to -0.7',
+                               '-0.7 to 0.3',
+                               '0.3 to 2',
+                               '2 to 4',
+                               '4 to 6'))
+
+table(Kine_data$cat_acc_x,Kine_data$activity) #x_acceleration vs activity
+table(Kine_data$cat_acc_y,Kine_data$activity) #y_acceleration vs activity
+table(Kine_data$cat_acc_z,Kine_data$activity) #z_acceleration vs activity
+```
+

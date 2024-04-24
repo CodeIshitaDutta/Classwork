@@ -1,0 +1,80 @@
+---
+title: "STA 160 Midterm"
+author: "Tyler Van Fleet Kingery"
+date: "4/26/2022"
+output: pdf_document
+---
+
+```{r}
+Kine_data = read.csv('Kinematics_Data.csv')
+```
+
+```{r}
+colnames(Kine_data)
+acc_x = diff(Kine_data$acceleration_x)
+```
+
+```{r}
+kine_run = subset(Kine_data, activity == 1)
+kine_walk = subset(Kine_data, activity == 0)
+kine_left = subset(Kine_data, wrist == 1)
+kine_right = subset(Kine_data, wrist == 0)
+
+```
+
+
+```{r}
+spec.pgram(acc_x, log= "no")
+spec.pgram(acc_x, log = "no", spans = 5)
+spec.pgram(acc_x, log = "no", spans = 15)
+spec.pgram(acc_x, log = "no", spans = 25)
+
+```
+
+
+```{r}
+max(Kine_data$acceleration_x)
+```
+
+```{r}
+Kine_data$cat_acc_x = cut(Kine_data$acceleration_x,
+                      breaks=c(-6,-4,-2,0,2,4,6),
+                      labels=c('-6 to -4',
+                               '-4 to -2',
+                               '-2 to 0',
+                               '0 to 2',
+                               '2 to 4',
+                               '4 to 6'))
+Kine_data$cat_acc_y = cut(Kine_data$acceleration_y,
+                      breaks=c(-6,-4,-2,0,2,4,6),
+                      labels=c('-6 to -4',
+                               '-4 to -2',
+                               '-2 to 0',
+                               '0 to 2',
+                               '2 to 4',
+                               '4 to 6'))
+Kine_data$cat_acc_z = cut(Kine_data$acceleration_z,
+                      breaks=c(-6,-4,-2,0,2,4,6),
+                      labels=c('-6 to -4',
+                               '-4 to -2',
+                               '-2 to 0',
+                               '0 to 2',
+                               '2 to 4',
+                               '4 to 6'))
+```
+
+
+Contingency tables for wrist vs acceleration
+```{r}
+table(Kine_data$cat_acc_x,Kine_data$wrist) #x_acceleration vs wrist
+table(Kine_data$cat_acc_y,Kine_data$wrist) #y_acceleration vs wrist
+table(Kine_data$cat_acc_z,Kine_data$wrist) #z_acceleration vs wrist
+```
+
+Contingency tables for activity vs acceleration
+```{r}
+table(Kine_data$cat_acc_x,Kine_data$activity) #x_acceleration vs activity
+table(Kine_data$cat_acc_y,Kine_data$activity) #y_acceleration vs activity
+table(Kine_data$cat_acc_z,Kine_data$activity) #z_acceleration vs activity
+```
+
