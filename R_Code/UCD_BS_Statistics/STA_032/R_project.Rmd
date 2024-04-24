@@ -1,0 +1,483 @@
+---
+title: "R Project"
+author: "Ishita Dutta, Justin Lu"
+date: "3/11/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(
+ echo = FALSE,
+ error = FALSE,
+ message = FALSE,
+ warning = FALSE
+)
+```
+
+```{r}
+library(ggplot2)
+library(viridis)
+
+```
+
+
+# Problem 1 - Fitbit.csv  
+```{r}
+#1) reading the file
+fitbit <- read.csv("Fitbit.csv", stringsAsFactors = TRUE)
+
+```
+
+\textcolor{olive}{a) List the names of the columns}
+```{r}
+#1a)
+colnames(fitbit)
+
+```
+
+
+\textcolor{olive}{b) Find the number of rows in the data set.}
+```{r}
+#1b)
+nrow(fitbit)
+
+```
+
+
+\textcolor{olive}{c) Use  the  function <<summary>> on  the  data set  and  display  the  results.   Describe  how  this  function  treats  categorical columns, and how it treats numeric columns.}
+```{r}
+#1c)
+summary(fitbit)
+
+```
+  The summary function will treat the numerical columns in a 5-number-summary manner. It returns the minimum, maximum, first quartile, median, and third quartile values, as well as the mean for the data set. In terms of the categorical numbers, the summary function will count them in terms of occurence and provide this data (i.e. F occured 13 times in the day column).
+
+
+
+\textcolor{olive}{d) Find the mean of the column Steps.}
+```{r}
+#1d)
+mean(fitbit[,1])
+
+```
+
+
+
+\textcolor{olive}{e) Find and display the average and standard deviation for steps taken for every day of the week.}
+  
+  Values for each day are printed average, then standard deviation.
+  
+  Monday
+```{r}
+#1e)
+monday_values<- subset(fitbit, Day == "M")
+mean(monday_values[,1])
+sd(monday_values[,1])
+
+```
+  
+  Tuesday
+```{r}
+tuesday_values<- subset(fitbit, Day == "T")
+mean(tuesday_values[,1])
+sd(tuesday_values[,1])
+
+```
+
+  Wednesday
+```{r}
+wednesday_values<- subset(fitbit, Day == "W")
+mean(wednesday_values[,1])
+sd(wednesday_values[,1])
+
+```
+
+  Thursday
+```{r}
+thursday_values<- subset(fitbit, Day == "R")
+mean(thursday_values[,1])
+sd(thursday_values[,1])
+
+```
+
+  Friday
+```{r}
+friday_values<- subset(fitbit, Day == "F")
+mean(friday_values[,1])
+sd(friday_values[,1])
+
+```
+
+  Saturday
+```{r}
+saturday_values<- subset(fitbit, Day == "Sat")
+mean(saturday_values[,1])
+sd(saturday_values[,1])
+
+```
+
+  Sunday
+```{r}
+sunday_values<- subset(fitbit, Day == "Sun")
+mean(sunday_values[,1])
+sd(sunday_values[,1])
+
+```
+
+
+
+\textcolor{olive}{f) Find and display the average hours and standard deviation of sleep for every day of the week.}
+  
+  Values for each day are printed average, then standard deviation.
+  
+  Monday
+```{r}
+#1f)
+mean(monday_values[,4])
+sd(monday_values[,4])
+
+```
+  
+  Tuesday
+```{r}
+mean(tuesday_values[,4])
+sd(tuesday_values[,4])
+
+```
+
+  Wednesday
+```{r}
+mean(wednesday_values[,4])
+sd(wednesday_values[,4])
+
+```
+
+  Thursday
+```{r}
+mean(thursday_values[,4])
+sd(thursday_values[,4])
+
+```
+
+  Friday
+```{r}
+mean(friday_values[,4])
+sd(friday_values[,4])
+
+```
+
+  Saturday
+```{r}
+mean(saturday_values[,4])
+sd(saturday_values[,4])
+
+```
+
+  Sunday
+```{r}
+mean(sunday_values[,4])
+sd(sunday_values[,4])
+
+```
+
+
+\textcolor{olive}{g) Create  a  boxplot  of  the  total  number  of  steps  for  every  day  of  the  week  (there  should  be  7  sub-plots). Does  it appear one day is less active than the rest?  Explain.}
+
+```{r}
+#1g)
+ggplot(fitbit,aes(x =Steps, y = Day, fill=Day))+
+  geom_boxplot()+
+  scale_fill_viridis(discrete = TRUE, alpha=0.6, option="A")+
+  theme(legend.position="none",plot.title =element_text(size=11))+
+  ggtitle("Number of steps for every day of the week")+
+  xlab("Steps")
+
+```
+
+  It seems that Sunday is less active than the other days of the week, as the entire subplot for Sunday is much closer to 0 than the other subplots. 
+
+
+
+\textcolor{olive}{h) Create a boxplot of the total hours of sleep for every day of the week (there should be 7 sub-plots). Does it appear one day is less restful than the rest?  Explain.}
+
+```{r}
+#1h)
+ggplot(fitbit,aes(x =Sleep, y = Day, fill=Day))+
+  geom_boxplot()+
+  scale_fill_viridis(discrete = TRUE, alpha=0.6, option="A")+
+  theme(legend.position="none",plot.title =element_text(size=11))+
+  ggtitle("Hours of sleep for every day of the week")+
+  xlab("Hours")
+
+```
+
+  It seems that Monday is less restful than the other days of the week, as 50% of the data for Monday is under the 25% data line for almost all of the other days of the week (the exception being Wednesday)
+  
+  
+
+\textcolor{olive}{i) Calculate the number of days where the total steps were above 10000.}
+```{r}
+#1i)
+steps_above <- subset(fitbit, Steps > 10000)
+nrow(steps_above)
+
+```
+
+
+
+\textcolor{olive}{j) Calculate the average number of steps taken when total sleep was below 7 hours.}
+```{r}
+#1j)
+sleep_under<- subset(fitbit, Sleep < 7)
+mean(sleep_under[,1])
+
+```
+
+# Problem 2 - Creating a Function
+
+
+\textcolor{olive}{a) Takes in a vector and subtracts the mean and divides by the standard deviation. Then returns the standard deviation of the result. Test on the vector X = 1:100.}
+```{r echo=TRUE}
+
+#2a)
+vector_function <- function(vector) {
+  mean_value = mean(vector)
+  standard_dev = sd(vector)
+  
+  # initialize newVector
+  n = length(vector)
+  newVector = seq(1,n)
+  # then loop vector and move values to new vector
+  for(x in 1:n){
+    value = (vector[x] - mean_value) / standard_dev
+    newVector[x] = value
+  }
+    
+  new_sd = sd(newVector)
+  return(new_sd)
+}
+sampleVector = seq(1,100)
+vector_function(sampleVector)
+
+```
+
+
+\textcolor{olive}{b) Takes in a vector and finds values 2s below and above the mean, where s is standard deviation and returns both labeled respectively. Test on vector X = 1:100.}
+
+```{r echo=TRUE}
+
+#2b)
+vector_function2 <- function(vector) {
+  mean_value = mean(vector)
+  standard_dev = sd(vector)
+  Lower = mean_value - (2*standard_dev)
+  Upper = mean_value + (2*standard_dev)
+  answer = list("upper" = Upper, "Lower" = Lower)
+  return (answer)
+}
+sampleVector = seq(1,100)
+vector_function2(sampleVector)
+
+```
+
+
+\textcolor{olive}{c) Create your own function. Provide a description and test.}
+  
+  My custom function takes in a vector and returns the greatest value in it.
+```{r echo=TRUE}
+
+#2c)
+custom_function <- function(vector) {
+  max = 0
+  n = length(vector)
+  for(x in 1:n){
+    if (vector[x] > max){
+      max = vector[x]
+    } 
+  }
+  return (max)
+}
+sampleVector = seq(1,100)
+sampleVector2 = c(3,54,21,-22,321,0,100,911192,32,321,32,1,8)
+custom_function(sampleVector)
+custom_function(sampleVector2)
+
+```
+
+# Problem 3 - Crime.csv
+
+```{r , include=FALSE}
+#3) reading the file
+crimes = read.csv("crime.csv")
+
+```
+
+\textcolor{olive}{a)  Plot a scatter plot of Y and X, being sure to label the axes and give a main title.}
+
+```{r}
+#3a)
+dip = crimes$dip
+crimeRate = crimes$rate
+plot(x = dip, y = crimeRate, 
+     xlab="High School Diploma %", 
+     ylab="Crime Rate" , 
+     main = "HS Diploma % vs Crime Rate")
+
+```
+
+\textcolor{olive}{b)  Does there appear to be outliers in the plot from (a)?  If so, identify them in R (for example, list the pair (X,Y)that are outliers, or equivalently the row).  Remove any outliers.}
+  
+  Yes, there does appear to be a outliers in our plot. Based off of the box plot we have 4 outliers, we can remove those from our data set and redo our scatterplot
+
+```{r}
+#3b)
+boxplot(dip)
+crimes <- crimes[-c(71, 76, 51, 39),]
+dip = crimes$dip
+crimeRate = crimes$rate
+
+
+plot(x = dip, y = crimeRate, xlab="High School Diploma %", ylab="Crime Rate" , main = "HS Diploma % vs Crime Rate")
+abline(lm(crimeRate ~ dip))
+```
+
+
+\textcolor{olive}{c)  Calculate the estimated regression line.}
+```{r}
+#3c)
+lm(crimeRate ~ dip)
+
+```
+
+  y = -171.9x +  20605.1
+
+
+\textcolor{olive}{d)  Interpret the slope and intercept (if appropriate) in terms of the problem.}
+  
+  __Solution:__ The slope is = -171.9, while the intercept is = 20605.1.For our problem, let us interpret this:
+  Starting with slope we can say that, when our X variable ( Diploma %) increases by 1 percent, based on our regression line, the average crime rate decreases by 171.9.
+
+  To interpret our intercept, 20605.1 is essentially that number to fit our line. Since our regression line is given as y = mx + b, our y intercept (b) is where the line would be when x is = to 0. In this case it logically does not have any relevance, and is just pertaining to our specific data set.
+
+\textcolor{olive}{e)  Create a QQ plot (normal probability plot) of the residuals.  Does it appear that they are normally distributed?Explain.}
+
+```{r}
+#3e)
+residuals = resid(lm(crimeRate ~ dip))
+
+qqnorm(residuals, pch = 1, frame = FALSE)
+qqline(residuals, col = "steelblue", lwd = 2)
+
+```
+Yes the graph does appear to be normally distributed. For the most part our graph follows our line and the deviation is minimal, meaning we have a normal distribution. We can safely deduce that our data set originates from a normal distribution.
+
+
+\textcolor{olive}{f)  Create a plot of the errors vs.  the fitted values (ˆYi’s).  Does it appear the variance of the errors is constant?  Explain.}
+
+```{r}
+#3f)
+fittedValues = fitted(lm(crimeRate ~ dip))
+plot(fittedValues, residuals, ylab="Residuals/Errors", xlab="fitted" ) 
+
+```
+  Yes, the variance of the errors does appear to be constant. Since our graph is scattered and we do not observe a relationship of any kind, we have a mean of 0 and the variance is constant.
+  
+  
+\textcolor{olive}{g) Find the 95 percent confidence interval for the slope and interpret it in terms of the problem. Does the interval suggest there is a significant linear relationship? Explain.}
+
+```{r}
+#3g)
+reg_line = lm(crimeRate ~ dip)
+confint(reg_line,'dip',level=0.95)
+
+```
+  
+  Yes we have a linear relationship as our model fits a normal distribution and our interval does not contain 0 we are working with a real linear slope value. We can interpret our confidence interval as we have a 95% confidence the true relationship between crime rate and one unit change of high school diploma % is between -300.0276 and -99.55674.
+
+# Problem 4 - Completing a Hypothesis test from Fitbit.csv
+
+
+\textcolor{olive}{a) State your problem.}
+  
+  __Problem:__ Is the number of steps on Sundays significantly different than the rest of the week?
+
+
+\textcolor{olive}{b) State null and alternate hypotheses}
+  
+  __mu-x__ = average number of steps on every other day except Sunday
+  
+  __mu-y__ = average number of steps on Sunday
+  
+  __null hypothesis__ mu-x - mu-y = 0
+  
+  __alternate hypothesis__ mu-x - mu-y != 0
+
+
+\textcolor{olive}{c) Calculate the test statistic.}
+```{r}
+#4c)
+every_except_sunday <- subset(fitbit, Day != "Sun")
+mux = mean(every_except_sunday[,1])
+muy = mean(sunday_values[,1])
+sx = sd(every_except_sunday[,1]) 
+sy = sd(sunday_values[,1])
+numerator = mux - muy
+rowx = nrow(every_except_sunday)
+rowy = nrow(sunday_values)
+varx = sx^2
+vary = sy^2
+inside_square = (varx/rowx) + (vary/rowy)
+ts =numerator/sqrt(inside_square)
+print(ts)
+
+```
+
+
+
+\textcolor{olive}{d) Calculate and interpret the p-value.}
+```{r}
+#4d)
+prob = 1 - pnorm(ts)
+pval = 2* prob
+pval
+
+```
+  The p-value of 8.33(e^(-7)) means that the probability of obtaining 0 as the difference between mu-x and mu-y is the 8.33(e^(-7)).
+
+
+\textcolor{olive}{e) Make your decision.  Use alpha = 0.05.}
+  
+  Using alpha = 0.05, we can reject the null hypothesis, as 8.33(e^(-7)) < 0.05.
+
+
+
+\textcolor{olive}{f) State your conclusion in terms of the problem.}
+  
+  This concludes that the number of steps on Sunday is significantly different than the other days of the week. By looking at either the values or any graph, we know the number of steps is significantly less than the other days of the week on Sundays.
+
+
+\textcolor{olive}{g) Construct and interpret a 90 percent confidence interval.  Does this support your decision?}
+```{r}
+#4g)
+degfreedom = rowx + rowy - 2
+tvalu = abs(qt(0.95, 88, lower.tail = TRUE))
+tvall = abs(qt(0.05, 88, lower.tail = TRUE))
+lower = numerator - (tvall * (sqrt((1/rowx)+(1/rowy))))
+lower
+upper = numerator + (tvalu * (sqrt((1/rowx)+(1/rowy))))
+upper
+
+```
+  The confidence interval is nowhere near the 0 that we based our null hypothesis on, let alone be within the interval. The interval supports the decision.
+
+
+\textcolor{olive}{h) What kind of error could you have made in your hypothesis test?  Interpret this error.}
+  
+  We could have made a Type I error, in which we rejected an actually true null hypothesis. This would mean that we decided the number of steps on Sunday is significantly different than the rest of the week when in actuality there was no significant difference. 
+
+
+
+# Appendix
+
+```{r, echo=TRUE, eval=FALSE, ref.label=knitr::all_labels()}
+```

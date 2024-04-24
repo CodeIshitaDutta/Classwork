@@ -1,0 +1,102 @@
+---
+title: "STA 141A Course Project"
+author: "Ishita Dutta, 918193342"
+date: "2/25/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data Cleaning and Subsetting Process
+
+### 1
+First things first, I want to gather the data and clean it. The WHO data has been provided by the class, and the vaccination data is one I have gotten from OWID. Getting this data, the first thing I want to do is specify a region(s). The regions I chose are the WPRO and the SEARO regions from the WHO dataset. This meant having 44 countries to start off. From here, I narrowed it down to a sample of 33 countries whose names were registered the same under both the vaccination data I got from OWID and the covid data I got from WHO. 
+
+These are the 33 countries:
+```{r include = FALSE, echo=FALSE}
+#libraries:
+library(tidyverse)
+library(ggplot2)
+
+
+#First working with the raw data:
+raw_dat <- read_csv("https://covid19.who.int/WHO-COVID-19-global-data.csv")
+colnames(raw_dat)
+c1 = raw_dat[which(!is.na(raw_dat$Country_code)),c("Date_reported", "New_cases", "Cumulative_cases",  "New_deaths", "Country" , "WHO_region")]
+vaccine = read.csv("daily-covid-vaccination-doses-per-capita.csv")
+#getting the proper regions in the WHO set
+c2 = c1[c1$WHO_region %in% c("SEARO","WPRO"), ]
+notcount = c("Democratic People's Republic of Korea", "Timor-Leste", "American Samoa", "Brunei Darussalam", "Guam", "Lao People's Democratic Republic", "Marshall Islands","Micronesia (Federated States of)", "Northern Mariana Islands (Commonwealth of the)", "Palau", "Pitcairn Islands", "Republic of Korea", "Viet Nam")
+covid =c2[!(c2$Country %in% notcount), ]
+```
+
+```{r}
+vaccine_countries = vaccine[vaccine$Entity %in% c(unique(covid$Country)), c("Entity", "Day", "new_vaccinations_smoothed_per_million")]
+colnames(vaccine_countries)[colnames(vaccine_countries) == 'new_vaccinations_smoothed_per_million'] <- 'Vaccinated'
+colnames(vaccine_countries)[colnames(vaccine_countries) ==  'Entity'] <- 'Country'
+colnames(vaccine_countries)[colnames(vaccine_countries) == 'Day'] <-  'Date_reported'
+merged = merge(covid, vaccine_countries, by = c("Country", "Date_reported") , all.x = FALSE)
+colnames(merged)
+#covidturk = subset(covid, Country == "Japan")
+#covidindon = subset(covid,  Country == "Viet Nam")
+#covidturkindon = rbind(covidturk, covidindon)
+#ggplot(data=covidturkindon, mapping=aes(x=Date_reported, y=New_cases, color = Country)) +
+#  geom_point()
+  #theme(legend.position = "none")
+```
+
+### 2
+From here, I merged the datasets together, making sure to only keep values where dates from both data sets were common over each country so that there are no NA values. 
+
+I then pulled out the oldest and most recent dates for each country, which are as follows
+
+```{r}
+#unique(merged$Country)
+#merged[merged$Country == "Philippines" , c("Country", "Date_reported", "New_cases", "New_deaths", "Vaccinated")]
+```
+
+
+### 3
+
+Now that I have the dates for each of these and know a bit more about the timeframe of the data, I can plot out the data and see what I am working with. Before I plotted the data, I decided to subset further into 3 population groups, as there are very different populations for different countries. For example, the population for India would be very different from the population of Tonga. 
+
+This is why we sort into the 3 groups of 11 countries each as follows:
+
+
+
+To explain this sorting a bit further, I ranked the countries in terms of population then sorted into 3 groups based on the ranking.
+
+
+### 4:
+
+At this point, I can compare each of the population groups just to see a general trend of the data:
+
+
+
+### 5:
+
+Here, I see a trend of sudden increase in estimated festival times for various countries. For example, we can see increases in the festival times and important events over 2021 for India as follows:
+
+
+### 6:
+
+For this reason, I want to sort the data a bit further into festival times for each country. I am basing this calendar off of the elementary school system calendars I found from the internet, as the most families will venture out of the house to celebrate a festival if there is a holiday from the school for the kids to also celebrate. 
+
+After sorting this data, the trends for each country look something like so:
+
+### 7:
+
+Based on the general shape of the graph, I can see that the general trend of cases for each country, which now means I can finally get to the actual question: How does the vaccination data correlate to the case rate?
+
+```{r}
+merged$NC2 = log(merged$New_cases)
+merged2 = merged[(merged$Country %in% c("Australia", "Bangladesh", "Cambodia", 
+                                        "China", "Fiji", "French Polynesia")), ]
+ggplot(data=merged2, mapping=aes(x=Date_reported, y=New_cases, color = Country)) +
+  geom_line() +
+  theme(legend.position = "bottom") +
+  labs(title = "6 Countries")
+```
+

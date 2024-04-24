@@ -1,0 +1,161 @@
+---
+title: "HW 4"
+author: "Ishita Dutta, Raina Joby"
+date: "5/15/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+# 6.13
+```{r}
+x1 = c(6, 4, 8, 2, 3, -3, 4, -4, -3, -4, 3, -4)
+x2 = c(8, 6, 12, 6, 8, 2, 3, 3, 2, -5, -3, -6)
+fac1 = c(1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3)
+fac2 = c(1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4)
+table1 = data.frame(x1, x2, fac1, fac2)
+xbar = c(mean(x1), mean(x2))
+xbar
+l1means = c(mean(table1$x1[table1$fac1 == 1]), mean(table1$x2[table1$fac1 == 1]))
+l2means = c(mean(table1$x1[table1$fac1 == 2]), mean(table1$x2[table1$fac1 == 2]))
+l3means = c(mean(table1$x1[table1$fac1 == 3]), mean(table1$x2[table1$fac1 == 3]))
+l1means
+l2means
+l3means
+k1means = c(mean(table1$x1[table1$fac2 == 1]), mean(table1$x2[table1$fac2 == 1]))
+k2means = c(mean(table1$x1[table1$fac2 == 2]), mean(table1$x2[table1$fac2 == 2]))
+k3means = c(mean(table1$x1[table1$fac2 == 3]), mean(table1$x2[table1$fac2 == 3]))
+k4means = c(mean(table1$x1[table1$fac2 == 4]), mean(table1$x2[table1$fac2 == 4]))
+#for (i in c(1:3)) {
+#  mean(table1$x1[table1$fac1 == 1])
+#}
+model1 = manova(cbind(x1,x2)~fac1+fac2)
+model1
+#summary(model1)
+```
+
+
+# 6.14
+```{r}
+x1.2 = c(14, 6, 8, 16, 1, 5, 0, 2, 3, -2, -11, -6)
+x2.2 = c(8, 2, 2, -4, 6, 12, 15, 7, -2, 7, 1, 6)
+
+tab = data.frame(x1.2, x2.2, fac1, fac2)
+l1.2means = c(mean(tab$x1[table1$fac1 == 1]), mean(tab$x2[table1$fac1 == 1]))
+l2.2means = c(mean(tab$x1[table1$fac1 == 2]), mean(tab$x2[table1$fac1 == 2]))
+l3.2means = c(mean(tab$x1[table1$fac1 == 3]), mean(tab$x2[table1$fac1 == 3]))
+l1.2means
+l2.2means
+l3.2means
+k1.2means = c(mean(table1$x1[tab$fac2 == 1]), mean(table1$x2[tab$fac2 == 1]))
+k2.2means = c(mean(table1$x1[tab$fac2 == 2]), mean(table1$x2[tab$fac2 == 2]))
+k3.2means = c(mean(table1$x1[tab$fac2 == 3]), mean(table1$x2[tab$fac2 == 3]))
+k4.2means = c(mean(table1$x1[tab$fac2 == 4]), mean(table1$x2[tab$fac2 == 4]))
+k1.2means
+
+
+
+
+
+
+#model2 = manova(cbind(x1,x2) ~ factor1*factor2, data = tab)
+#model2
+#summary(model2)$SS
+```
+
+# 6.19 
+
+## a)
+```{r}
+costs = read.table('T6-10.dat')
+colnames(costs) = c('fuel','repair', 'capital', 'type')
+```
+
+
+```{r}
+model3 = manova(cbind(fuel, repair, capital)~type, data = costs)
+summary(model3, test = 'Wilks')
+```
+
+By using Wilks Lambda, we reject the null that the difference in means is not 0.
+
+## b)
+```{r}
+alpha = 0.01
+n = 57
+sm3 = vcov(model3)
+n1 = 36
+n2 = 23
+multival = n1 + n2 - 2
+costs2gas = cbind(costs$fuel[costs$type == 'gasoline'], costs$repair[costs$type == 'gasoline'], costs$capital[costs$type == 'gasoline'])
+covgas = cov(costs2gas)
+
+costs2diesel = cbind(costs$fuel[costs$type == 'diesel'], costs$repair[costs$type == 'diesel'], costs$capital[costs$type == 'diesel'])
+covdiesel = cov(costs2diesel)
+
+covdiff = covgas - covdiesel
+spooled = (((n1 - 1)/multival)*covgas) + (((n2 - 1)/multival)*covdiesel)
+
+xbar = c((fuelmeans[2] - fuelmeans[3]), (repairmeans[2] - repairmeans[3]), (capitalmeans[2] - capitalmeans[3]))
+xbar
+solve(spooled) %*% xbar
+m <- 3
+p = 2
+
+
+
+
+
+
+
+
+#means are total, gasoline, diesel
+fuelmeans = c(mean(costs$fuel), mean(costs$fuel[costs$type == 'gasoline']), mean(costs$fuel[costs$type == 'diesel']))
+repairmeans = c(mean(costs$repair), mean(costs$repair[costs$type == 'gasoline']), mean(costs$repair[costs$type == 'diesel']))
+capitalmeans = c(mean(costs$capital), mean(costs$capital[costs$type == 'gasoline']), mean(costs$capital[costs$type == 'diesel']))
+fuelmeans
+repairmeans
+capitalmeans
+```
+
+By looking at the means for each of the factors, we can make the conjecture that the capital is the variable most responsible for rejecting the null hypothesis, as that is the variable with means of the largest distance from each other
+Following result 6.4 in the textbook:
+[3.58
+-1.88
+-4.48]
+
+
+
+## c)
+```{r}
+
+intervals <- matrix(NA,3,2)
+multiplier = sqrt(((p * (n-1))/(n-p)) * qf(alpha, length(costs$fuel[costs$type =='gasoline']), length(costs$fuel[costs$type =='diesel']))) * sqrt((sm3[1,1]^2 - 2 *sm3[1,2] + sm3[2,2] ^ 2)/n)
+
+
+for (i in 1:m){
+  intervals[i,1] <- xbar[i] - multiplier
+  intervals[i,2] <- xbar[i] + multiplier
+}
+intervals
+```
+
+The same as part b applies as we were not able to code the right answer(above) even after solving for it by hand correctly. The intervals are:
+2.113 +/- 3.790
+-2.65 +/- 4.341
+-8.578 +/- 4.913
+
+
+
+
+
+
+
+
+
+
+
+

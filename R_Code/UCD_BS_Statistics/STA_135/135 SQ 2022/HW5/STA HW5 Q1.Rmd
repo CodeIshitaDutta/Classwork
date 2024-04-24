@@ -1,0 +1,51 @@
+---
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# P3:
+```{r}
+#reading the data from table 8.4 and assigning column names 
+tab= read.table("T8-4.dat", sep="\t")
+colnames(tab)= c("JP Morgan", "Citi", "Wells Fargo", "Royal", "Exxon")
+
+#print the first few observations
+head(tab)
+```
+
+
+
+```{r}
+#Principle Component Analysis
+
+#Simple Statistics
+means= colMeans(tab)
+SD= apply(tab,2,sd)
+
+stat= rbind(means,SD)
+stat
+
+#Calculating the covariance matrix,S
+S=cov(tab)
+S
+
+#Sample Principal components
+e= eigen(S)
+e_val= e$values
+e_vec= e$vectors
+difference= round(-1*diff(e_val),6)
+prop_val= e_val/sum(e_val)
+total= cumsum(prop_val)
+
+e_value=data.frame(e_val, Difference= c(difference, ''), prop_val, total)
+rownames(e_value)= c('PC1', 'PC2','PC3','PC4','PC5')
+e_value
+
+e_vector=as.data.frame(e_vec)
+colnames(e_vector) = c("PC1","PC2","PC3","PC4","PC5")
+rownames(e_vector) = c("JP Morgan", "Citi", "Wells Fargo", "Royal", "Exxon")
+e_vector
+```

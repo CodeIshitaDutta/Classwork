@@ -1,0 +1,96 @@
+---
+title: "Homework 1"
+author: "Ishita Dutta"
+date: "1/15/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Getting Data Setup
+```{r}
+library(readxl)
+cars <- read_excel("cars931.xlsx")
+Y = log(cars[,1])
+X1 = log(cars[,2])
+X2 = log(cars[,3])
+X3 = log(cars[,4])
+X4 = sqrt(cars[,5])
+X5 = cars[,6]
+X6 = cars[,7]
+```
+#1a)
+```{r}
+columns = c(Y, X1, X2, X3, X4, X5, X6)
+names = c("Y - log(Price)", "X1 - log(City MPG)", "X2 - (HGY MPG)", "X3 - log(Engine Size)", "X4 - sqrt(HP)", "X5 - Tank Size", "X6 - Weight")
+counter = 1
+for(i in columns) {
+  hist(i, main = paste("Histogram of", names[counter]))
+  counter = counter + 1
+}
+counter = 1
+```
+
+#1b)
+```{r}
+carsframe = data.frame(Y, X1, X2, X3, X4, X5, X6)
+pairs(carsframe)
+cor(carsframe)
+```
+_Answer:_
+The correlation matrix seems to suggest strong multicollinearity in between all of the variables and Y as well as between each other. These all need to be investigated further before building a model.
+
+1c)
+```{r}
+reg1 = lm(formula  = carsframe[,1] ~ carsframe[,2] + carsframe[,3] + carsframe[,4] + carsframe[,5] + carsframe[,6] + carsframe[,7], data = carsframe)
+summary(reg1)
+anova(reg1)
+```
+
+1d) I think not all the variables are needed for this regression model. In particular, the tank size and weight are not as necessary as the other variables as they do not seem to have as much of a significant P value in the ANOVA table. For this model, I would drop the tank size variable (X5) because it is the least significant variable in the ANOVA table.
+
+2a)
+```{r}
+plot(reg1$residuals, col = "dark red")
+abline(h = 0, col = "dark green")
+```
+_Answer:_
+I feel that there should not be a problem here, as the scatterplot of the residuals seems to follow a rather normal distribution around the proposed regression line.
+
+2c)
+```{r}
+qqnorm(reg1$residuals)
+qqline(reg1$residuals, col = "salmon")
+hist(reg1$residuals, col = "dark blue", breaks = 8)
+```
+_Answer: _
+Yes, because the plot points follow the normality line almost exactly. The histogram also shows a relatively normal curve for the points.
+
+3a)
+```{r}
+step(reg1)
+```
+
+3b)
+```{r}
+library(flexmix)
+BIC(lm(carsframe[, 1] ~ carsframe[, 2] + carsframe[, 3] + carsframe[, 
+    4] + carsframe[, 5] + carsframe[, 6] + carsframe[, 7]))
+BIC(lm(carsframe[, 1] ~ carsframe[, 2] + carsframe[, 3] + carsframe[, 
+    4] + carsframe[, 5] + carsframe[, 7]))
+BIC(lm(carsframe[, 1] ~ carsframe[, 2] + carsframe[, 3] + carsframe[, 5] + carsframe[, 7]))
+BIC(lm(carsframe[, 1] ~ carsframe[, 2] + carsframe[, 5] + carsframe[, 7]))
+BIC(lm(carsframe[, 1] ~ carsframe[, 2] + carsframe[, 5]))
+```
+
+_Answer:_
+The last model, only taking X1 and X4, has the lowest constant, which means it should be the best model to use in this data set.
+
+```{r}
+reg2 = lm(carsframe[, 1] ~ carsframe[, 2] + carsframe[, 5])
+summary(reg2)
+anova(reg2)
+```
+Both criterion point to this model as the best for this data set.

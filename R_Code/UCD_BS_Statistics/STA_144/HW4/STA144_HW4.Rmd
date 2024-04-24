@@ -1,0 +1,238 @@
+---
+title: "Homework 4"
+author: "Ishita Dutta"
+date: "6/02/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 1
+## a)
+
+```{r}
+
+N <- 828
+n <- 85
+M <- 215
+number_errors <- c(0,1,2,3,4)
+frequency <- c(57,22,4,1,1)
+t_sum <- sum(number_errors * frequency)
+t <- t_sum*(N/n)
+
+s2 <- (1/(n-1))*sum(frequency*((number_errors - (t_sum/n))^2))
+
+y_hat <- t/(N*M)
+
+SE <- (sqrt((1-(n/N))*(s2/n)))/M
+cat('error rate : ', y_hat, '\n', 'standard error : ', SE)
+```
+
+## b)
+
+```{r}
+total_errors <- N*sqrt((1-(n/N))*(s2/n))
+cat("Total number of errors in the 828 claims : ", total_errors)
+
+```
+
+### c)
+
+```{r}
+
+n <- 18275
+N <- 178020
+
+se_p <- sqrt((1-(n/N))*(((1-y_hat)*y_hat)/n))
+cat(se_p)
+
+```
+We can see from the above result that if we just took SRS sampling, the variance would have been smaller.
+
+# 2
+
+## a)
+
+```{r}
+N <- 29
+n <- 4
+total_students = c(1471, 890, 1021, 1587) # Mi
+female_stu = c(792,447,511,800) #mi
+
+female_students_interviewed = c(25,15,20,40) 
+smokers = c(10,3,6,27)
+
+wij = (N * total_students) / (n * female_stu)
+
+#sum(smokers)/sum(female_students_interviewed)
+
+#sum(smokers) / sum(female_stu)
+
+thatclu = sum(wij * (smokers / female_students_interviewed) * total_students)* (N/n)
+thatclu / (sum(wij  * total_students) * (N/n))
+
+
+```
+
+## b) 
+```{r}
+thatclu
+
+```
+
+## c)
+```{r}
+## This one I don't know ...
+```
+
+
+# 3
+## a) 
+```{r}
+
+measles <- read.csv("measles.csv")
+
+school_avg <- c()
+for (i in 1:10) {
+  school_avg[i]  <- mean(measles[measles$school==i & measles$returnf!=9,]$returnf)
+}
+
+school <- c(1:10)
+data.frame(school, school_avg)  
+```
+
+## b) 
+```{r}
+
+
+N<-46
+n<-10
+
+
+W <-c()
+
+M <- unique(measles$Mitotal)
+
+
+for (i in 1:10) {
+  #M <- nrow(measles[measles$school==i & measles$previmm==0  ,])
+  #m <- nrow(measles[measles$school==i,])
+  a <-length(measles[measles$school==i,]$mi)
+  m <- sum(measles[measles$school==i,]$mi)/a
+  Mi <- M[i]
+  cat(Mi,' : ',m)
+  cat('\n')
+  
+  w <- (Mi*N)/(m*n)
+  W[i] <- w
+}
+
+W
+measles[measles$school==i,]
+#measles[measles$school==i & measles$previmm==0,]
+
+```
+
+## c) 
+```{r}
+# I'm not sure about this but the concept follows (2b)
+```
+
+## d) 
+
+
+# 4
+## a)
+
+```{r}
+states <- read.csv("statepps.csv")
+
+landarea <- states$landarea
+states$psi_landarea <- states$landarea / sum(states$landarea)
+n <- 10
+states_n <- 51
+
+cumulative <- cumsum(landarea)
+
+samples <- sample(1:max(cumsum(landarea)), n, replace = TRUE)
+
+
+group <-c()
+index <-c()
+for (i in 1:10) {
+  temp <- states_n - sum(samples[i]<cumulative) + 1
+  index[i] <-temp
+  group[i] <- states$state[temp]
+    }
+group
+```
+
+
+## b)
+
+```{r}
+pop <- states$pop2019
+psi_pop <- states$pop2019 / sum(states$pop2019)
+states["psi_pop"] <- psi_pop
+n <- 10
+states_n <- 51
+
+cumulative <- cumsum(pop)
+
+samples <- sample(1:max(cumsum(pop)), n, replace = TRUE)
+
+group <-c()
+index <-c()
+for (i in 1:10) {
+  temp <- states_n - sum(samples[i]<cumulative) + 1
+  index[i] <-temp
+  group[i] <- states$state[temp]
+    }
+group
+
+```
+
+
+## c)
+
+*   We can see that there are repetitions in some samples but also can find out that the states with large states result in large populations. 
+
+# 5
+## a)
+
+```{r}
+
+dat <- states[index,]
+
+t_hat <- (1/n)*(sum(dat$counties/dat$psi_landarea))
+sum(states$counties)
+t_hat
+
+se <- sqrt((1/n)*(1/(n-1))*sum(((dat$counties/dat$psi_landarea) - t_hat)^2))
+se
+
+```
+
+## b)
+
+```{r, echo=FALSE}
+t = states_n*(sum(dat$counties)/n )
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

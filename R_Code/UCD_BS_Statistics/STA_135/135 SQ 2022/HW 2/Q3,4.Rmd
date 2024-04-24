@@ -1,0 +1,97 @@
+---
+title: "Q3,4"
+author: "Ishita Dutta, Raina Joby"
+date: "4/25/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(Hotelling)
+```
+
+
+# Part 3 - 5.18)
+
+## a)
+```{r}
+# This is from the national track records for women data set, table 1.9
+## read the table
+college = read.table("T5-2.DAT") 
+## set the column names
+colnames(college) = c("SSH", "Verbal", "Science")
+head(college)
+xbar = c(526.29, 54.69, 25.13)
+mu = c(500, 50, 30)
+S = matrix(c(5808.06, 597.84, 222.03,
+                597.84, 126.05, 23.39,
+                222.03, 23.39, 23.11),
+              nrow=3, ncol=3, byrow=TRUE)
+testnull = hotelling.stat(as.matrix(college), t(as.matrix(mu)))
+testnull.stat = testnull$statistic
+testnull.df = testnull$df
+cat("T2: ", testnull.stat)
+cat("\nP-Value: ", qf(0.05, testnull.df[1], testnull.df[2]))
+```
+
+## b)
+```{r}
+n = length(college$SSH)
+for (i in c(0:2)) {
+  ME = (S[3^i]/n) * (qt(0.025, n - 1))
+  lower = xbar[i + 1] + ME - mu[i + 1]
+  upper = xbar[i + 1] - ME - mu[i + 1]
+  cat("Ellipsoid Axes Distance X", (i + 1), ": [", lower, ",", upper, "]\n")
+}
+```
+
+## c)
+```{r}
+# QQ-plot of Social Science and History
+qqnorm(college$SSH,pch = 1, frame = FALSE, main = "Social Sciences and History")
+qqline(college$SSH, col = "steelblue", lwd = 2)
+
+# QQ-plot of Verbal
+qqnorm(college$Verbal,pch = 1, frame = FALSE, main = "Verbal")
+qqline(college$Verbal, col = "salmon", lwd = 2)
+
+# QQ-plot of Social Science and History
+qqnorm(college$Science,pch = 1, frame = FALSE, main = "Science")
+qqline(college$Science, col = "dark green", lwd = 2)
+
+```
+
+
+
+# Part 4 - 5.21
+```{r}
+bmineral = read.table("T1-8.DAT")
+colnames(bmineral) = c("Dom Rad", "Rad", "Dom Hum", "Hum", "Dom Ulna", "Ulna")
+bmineral
+means = colMeans(bmineral)
+sds = apply(bmineral,2,sd)
+n = length(bmineral$`Dom Rad`)
+p = 6
+t2 = (((n - 1)* p)/(n - p )) * qf(0.05, p, n - p)
+TME = sqrt(sds / n) * sqrt(t2)
+lower_T2 =round(means - TME, 3) 
+upper_T2 =round(means + TME, 3) 
+B = qt(1-(0.95/(p - 2.64)),(n*p-1)*(n-1)) * sds
+lower_B =round(means - B, 3) 
+upper_B =round(means + B, 3) 
+data.frame(means, sds, lower_T2, upper_T2, lower_B, upper_B)
+```
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,58 @@
+---
+title: "Practice Final"
+author: "Ishita Dutta"
+date: "6/9/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 1)
+## 1a)
+False, df(SSR) = p - 1, not p
+
+## 1b)
+False, while r = sqrt(R2) = __|0.8|__, which means we do not know whether this is positive or negative, therefore we cannot claim this statement to be true.
+
+## 1c)
+False, since B0 has 0 in the interval, we cannot be sure that Y = 0 will not show up when x = 0. 
+
+## 1d)
+True, since SSR(x1, x2, x3) = SSR(x1) + SSR(x2|x1) + SSR(x3|x1, x2) in general, which is not the case in these 4 numbers.
+
+
+# 2)
+## 2a)
+
+## 2b)
+
+## 2c)
+
+
+
+# 3)
+## 3a)
+
+## 3b)
+
+## 3c)
+
+
+
+# 4)
+## 4a)
+
+## 4b)
+
+## 4c)
+
+
+
+# 5)
+## 5a)
+
+## 5b)
+
+

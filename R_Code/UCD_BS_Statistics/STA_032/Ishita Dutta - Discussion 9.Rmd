@@ -1,0 +1,23 @@
+---
+title: "Discussion 9 - Ishita Dutta"
+output: pdf_document
+---
+
+# Problem 2
+
+a) Provide a brief list of R content you learned during lectures/discussion.
+__Solution:__
+  - How to make and use markdown file, arithmetic, variables
+  - Saving and using data sets, percentiles
+  - random sampling and using results
+  - if/else statements
+  - norm functions
+  - histograms and boxplots
+  - confidence intervals
+  - summary() and lm()
+
+b) What other items would you like to review/discuss in R?
+__Solution:__ I would like to learn about reading csv files in R inside discussion, rather than using built in sets. This gives us a larger scope of data to work with.
+
+c) What additional information in R did you learn on your own?
+__Solution:__ I learned how to read csv files, as well as how to use the subset() function. 

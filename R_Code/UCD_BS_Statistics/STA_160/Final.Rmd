@@ -1,0 +1,277 @@
+---
+title: "Final"
+author: "Ishita Dutta"
+date: "5/12/2022"
+output: html_document
+---
+
+
+# All libraries used.
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+library('plyr')
+library(ggplot2)
+library(tidyverse)
+library(moments)
+library(forecast)
+library(car)
+```
+
+Continue below to project :)
+
+
+# Functions to use
+```{r}
+name_state_split = function(dataset){
+  name_state = strsplit(dataset$NAME,", ")
+  name_state = t(matrix(unlist(name_state),nrow = 2))
+  dataset$NAME = name_state[,1]
+  state = strsplit(name_state[,2]," ")
+  state = t(matrix(unlist(state),nrow = 2))[,1]
+  dataset$STATE = state
+  return(dataset)
+}
+
+
+year_month_split = function(dataset){
+  year_month = strsplit(dataset$DATE,"-")
+  year_month = t(matrix(unlist(year_month),nrow = 2))
+  dataset$YEAR = year_month[,1]
+  dataset$MONTH = year_month[,2]
+  return(dataset)
+}
+
+print_na_vals = function(dataset){
+  print(dataset[1, 'NAME'])
+  print(nrow(dataset))
+  print(colSums(is.na(dataset)))
+}
+
+state_contigency_tavg = function(dataset){
+  statevals = unique(dataset$STATE)
+  for(i in c(1:length(statevals))) {
+    print(statevals[i])
+    newdata = filter(dataset, STATE == statevals[i])
+    print(table(newdata$breaks_tavg,newdata$MONTH))
+    heatmap(table(newdata$breaks_tavg, newdata$MONTH), Colv = NA, Rowv = NA, scale="column", main =  statevals[i], col = hcl.colors(256, palette = "Peach",  alpha = 0.7))
+  }
+  heatmap(table(dataset$breaks_tavg, dataset$MONTH), Colv = NA, Rowv = NA, scale="column", main = c("All States"), col = hcl.colors(256, palette = "Emrld", alpha = 0.7))
+}
+
+```
+
+
+# Previous stuff, not include in report
+```{r eval=FALSE, include=FALSE}
+# Stations I have:
+## Montana, New Mexico, Colorado, Wyoming, California, Texas, Idaho, Utah, Nevada, Arizona, Oregon, Washington, Pennsylvania, Delaware
+
+
+
+mt = read.csv("Stations_Montana.csv")
+nm = read.csv("Stations_NewMexico.csv")
+co = read.csv("Stations_Colorado.csv")
+wy = read.csv("Stations_Wyoming.csv")
+ca = read.csv("Stations_California.csv")
+tx = read.csv("Stations_Texas.csv")
+id = read.csv("Stations_Idaho.csv")
+ut = read.csv("Stations_Utah.csv")
+nv = read.csv("Stations_Nevada.csv")
+az = read.csv("Stations_Arizona.csv")
+or = read.csv("Stations_Oregon.csv") 
+wa = read.csv("Stations_Washington.csv") 
+pa = read.csv("Stations_Pennsylvania.csv")
+de = read.csv("Stations_Delaware.csv") 
+rep_state = read.csv("Stations_replace.csv")
+reject_stations = c("WOODROW 6 NNE, CO US", "MOUNT SHASTA CALIFORNIA, CA US", "OAK GROVE CALIFORNIA, CA US", "GUNSIGHT ARIZONA, AZ US", "ROCK CREEK OREGON, OR US")
+```
+
+# Cleaning data for analysis...
+```{r}
+
+st = read.csv("combined_data.csv")
+varnames = c('STATION', 'NAME', 'DATE', 'DP10', 'DX32', 'DX90', 'PRCP', 'TAVG', 'TMAX', 'TMIN')
+avai_id = which((!is.na(st$PRCP)))
+states1 = st[avai_id, varnames]
+avai_id2 = which((!is.na(states1$DX32)))
+states2 = states1[avai_id2,]
+
+
+states3 = name_state_split(states2)
+states = year_month_split(states3)
+mi2 = states[states$STATE == "MI",]
+```
+
+
+
+## Graphing the contingency table - DO NOT INCLUDE IN REPORT
+```{r eval=FALSE, include=TRUE}
+states$breaks_tavg = cut(states$PRCP,breaks=c(0,0.25, 0.5, 0.75, 1,1.25,1.5,2,2.5,3,3.5,4,6,10, 100))
+state_contigency_tavg(states)
+
+#heatmap(table(states$breaks_tavg, states$MONTH))
+
+#table(states$breaks_tavg,states$MONTH)
+
+```
+ --> Essentially a color closer to white for the square means that there is a higher count on that square
+
+
+
+
+# Checking for NA Values after cleaning the data
+```{r}
+print_na_vals(states)
+max(states$PRCP)
+```
+
+We know the data is cleaned up and ready for analysis/testing now :)
+
+
+# Question and Introduction
+Question: Can we determine an amount of rain after which we can guess that there was a flood event at the time? Can we find an accurate interval for the average amount of rain in the Continental US in any given location for a month?
+
+# Analysis process
+
+## Plotting what we have first:
+
+To see our data and choose a direction, I have first plotted all of the precipitation values sorting by month:
+```{r}
+#ggplot(mi2, mapping=aes(x=YEAR, y=PRCP)) +
+#  geom_point(aes(color = NAME))
+
+
+ggplot(states, mapping=aes(x=YEAR, y=PRCP)) +
+  geom_point(aes(color = STATE))
+  
+```
+
+### Comments here:
+From the two plots above, I believe there may a certain amount of rain, after which we can state that there might be a likelihood for flooding. From the graph itself, I want to take this value as 15 inches of rain or higher for the month, as that would mean 1 inch of rain in two days if it rained consistently the entire month. 
+In any case, this statement would not be true, so there would be a larger amount of rain falling at once when it does rain. Using 15 inches as a threshold for now would be reasonable. I will find whether this number is proper or not using further analysis.
+
+```{r}
+cat("Number of Values:", length(states$NAME), "\n\nNumber of observations above \n15 inches of precipitation for the month: ", length(states[states$PRCP > 15,'NAME' ]))
+
+```
+
+With the first output being the total number of observations and the second output being the number of observations above 15 inches of rain for the month, I believe this might be a nice hypothesis for a possible flooding threshold. 
+
+
+# Histograms and Hypothesis from Raw data:
+
+Now, I will go through the process of verifying this hypothesis by first plotting the data again in the form of a histogram and a boxplot. The histogram will give a distribution on the frequency of the data, along with how we can make various observations on it. The boxplot will help us identify the outliers.
+
+Currently, these are the values for outliers based on the data. Values above the high value should be treated as anomalies, which could be possible storms or floods.
+
+```{r}
+hist(states$PRCP)
+boxplot(states$PRCP)
+mval = mean(states$PRCP)
+sdval = sd(states$PRCP)
+low = mval - (1.96 * (sdval^2))
+high = mval + (1.96 * (sdval^2))
+prcp_high2 = states[states$PRCP > round(high), ]
+
+cat("Interval for Outliers: ", max(low, 0), high, "\n\n", "Number of Events: ", length(prcp_high2$NAME))
+
+
+```
+### Commentary to add with graphs above:
+We see there are a bunch of outliers present from the boxplot and that there is a very high skew with the histogram. 
+
+Based on this given interval, we can see that threshold of 15 inches was not an incorrect one in terms of flooding events. 
+
+On the flip side, we can see that the outliers (ie. heavy rain/flooding events) are skewing our data to a point where we cannot tell the average amount of rain in the continental US for any given month.
+
+In this case, I will perform a transformation on the data to bring the precipitation values to a more normal amount. From here, I will remove the outliers and make an interval on the average amount of rain in the continental US for any given month.
+
+The reason for this is, in addition to finding a threshold for what we can guess as flood events, I also want to find an average amount of rain in continental United States for any given month.
+
+
+
+# Transforming the Data and choosing the transformation:
+```{r}
+# Setting up the values for the transforms
+states$sqrtprcp = sqrt(states$PRCP)
+states$logprcp = log(states$PRCP)
+states$recip = 1/states$PRCP
+states[which(states$logprcp == -Inf ), 'logprcp'] = 0
+states[which(states$recip == Inf ), 'recip'] = 0
+
+# Original data
+cat("Original: ", skewness(states$PRCP), '\n')
+qqnorm(states$PRCP)
+qqline(states$PRCP)
+
+# Reciprocal transform
+cat("Reciprocal: ", skewness(states$recip), '\n')
+qqnorm(states$recip)
+qqline(states$recip)
+
+# Logarithmic transform
+cat("Log: ", skewness(states$logprcp), '\n')
+qqnorm(states$logprcp)
+qqline(states$logprcp)
+
+# Square root transform
+cat("Square Root: ", skewness(states$sqrtprcp), '\n')
+qqnorm(states$sqrtprcp)
+qqline(states$sqrtprcp)
+
+```
+
+
+The skew values here give us how much our data is skewed. This is a number we want as close to 0 as possible, so that we can run a normality assumption to get proper outliers. The QQ plots tell us how much the data follows a normal distribution after the transformation, with being more on the line as being more of a normal distribution.
+
+In both of these cases, I see that the square root transformation is the best of the various transformations I have performed, so that will be the transformation I use to run outlier identification under a normality assumption (I am assuming a normal distribution for this transformed data).
+
+
+
+# Running transformation and interval from transformation
+Below, I will run a similar test as when I did with the raw data for an outlier, but without the outliers in the data (after the transformation):
+
+```{r}
+hist(states$sqrtprcp)
+boxplot(states$sqrtprcp)
+outliers <- boxplot(states$sqrtprcp, plot=FALSE)$out
+cat("Number of outliers under transformed data: ", length(outliers))
+
+# Removing the outliers and gathering new interval
+x = which(!(states$sqrtprcp %in% outliers))
+xvals = states[x, 'sqrtprcp']
+
+mval2 = mean(xvals)
+sdval2 = sd(xvals)
+low2 = mval2 - (1.96 * (sdval2^2))
+high2 = mval2 + (1.96 * (sdval2^2))
+prcp_high3 = xvals > round(high2)
+boxplot(xvals)
+
+
+cat("\n\n\nInterval of normal rain amounts in Continental US:", low2^2, high2^2, "\n\nNew Number of Outliers: ", length(boxplot(xvals, plot=FALSE)$out), "\n\nNumber of Precipitation values in the 0.05% not accounted by Interval: ", length(which(prcp_high3 == TRUE)))
+```
+
+The interval after the outliers are removed seem much more reasonable for the continental US to record rain for any given month at any given station than the first interval we pulled up with the original data. If we look at the original graph as well, we can see more sparse values as soon as the graph reached 10. Removing the outliers, this is what the new graph would look like:
+
+```{r}
+ggplot(states[x,], mapping=aes(x=YEAR, y=PRCP)) +
+  geom_point(aes(color = STATE))
+```
+ 
+And the histogram of the transformed data without outliers:
+```{r}
+hist(states[x,"sqrtprcp"]) 
+```
+
+These now show that our new interval is much better for a general amount of rain (without flood/heavy rain anomalies) in the Continental US.
+
+
+
+
+
+
+
+
+
+

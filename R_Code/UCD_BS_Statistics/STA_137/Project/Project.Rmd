@@ -1,0 +1,176 @@
+---
+title: "Project"
+author: "Ishita Dutta, Ruize Xu, Ziyuan Li"
+date: "3/7/2022"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r include = FALSE}
+# Loading all of the required libraries
+library(tidyverse)
+library(readxl)
+library(astsa)
+library(forecast)
+library(ggplot2)
+```
+
+
+# Introduction
+
+
+
+# Materials and Methods
+
+This is what we get when we plot the original data:
+
+```{r}
+# Getting the raw data:
+data1 = read_excel("TempNH_1850_2021.xlsx")
+colnames(data1) = c("Year", "Anomaly")
+d1 = diff(data1$Anomaly)
+#plotting time series of the anomalies from the original data
+plot.ts(data1$Anomaly)
+```
+
+
+We know we are working with a time series because we are looking at the year from 1800 in the data. This is a yearly measure that keeps jumping up and down.
+
+Our data, however, does not seem to be a stationary time series. The data seems to be moving in a general upward fashion, like an exponential graph.
+
+Because everything we learned is on a stationary time series, let's see if the difference of the data is a stationary time series we can run our learned analytical tests on:
+
+```{r}
+#plotting the difference data
+plot.ts(d1, col = "salmon")
+abline(h = 0)
+```
+
+
+This looks more like a stationary time series as we have an even distribution both above and below the y = 0 line, and it seems to keep jumping up and down across this line. From this we can denote that there is no correlation between the points therefore leaving us with a stationary time series. This will be what we will work with for the rest of the report. Now that we have determined the time series we are using(we will call it `d1`), we can try fitting a model and begin analysis.
+
+The first way we can figure out a model is through ACF and PACF plotting our data. We will use this first to make a guess on what kind of model to fit. To begin, let's plot the ACF and PACF of `d1`:
+```{r}
+acf(d1, col = "dark green")
+pacf(d1, col = "violet")
+```
+
+
+From these plots, we can now guess our model and the degrees for our model:
+
+The model we will use is an `ARMA(p, q)` model, as both ACF and PACF have a degree lag we can count before it tails off into the dotted lines in the graph. 
+
+Specifically, we will look at the `ARMA(3, 2)` model. From the PACF, we look at `p = 3`, since there are 3 lag lines outside the dotted error lines. From the ACF, we find `q = 2` with the same reasoning.
+
+Now that we have a guess for our model, let's make sure we are fitting an appropriate model to our data using a value table over combinations of `p` and `q` over the interval `[0, 3]`:
+```{r}
+AIC <- data.frame(matrix(0,4,4), row.names = c("MA(0)", "MA(1)", "MA(2)", "MA(3)"))
+colnames(AIC) = c("AR(0)", "AR(1)", "AR(2)", "AR(3)")
+number = 0
+fin_model = sarima(data1$Anomaly, 0, 1 ,0, details = FALSE)
+for (i in c(0:3)) {
+  for (j in c(0:3)) {
+    model = sarima(data1$Anomaly, p = i, d = 1, q = j, details = FALSE)
+    AIC[i+1,j+1] = model$AIC
+    if (model$AIC <= number) {
+      fin_model = model
+      number = model$AIC
+    }
+  }
+}
+AIC
+```
+
+
+So, from this matrix, it may seem confusing to read through all of it, but this is what we get out of it:
+```{r}
+x = data.frame(matrix(c(number, "ARMA(3, 0), or AR(3)"), ncol = 2, byrow = TRUE))
+colnames(x) = c("Smallest AIC", "Model")
+x
+```
+
+
+While the model we fit would still work, we want to prefer this above model as it seems to fit better to our time series. 
+
+Now that we have a model, we should still check if it is a reasonable model. So far we have only proved that this is the best model, not that it is reasonable (this is the difference of precision and accuracy):
+
+The first way we can check this is by plotting the residuals as a time series:
+```{r}
+m2 = arima(data1$Anomaly, order = c(3, 1, 0))
+plot.ts(m2$residuals)
+abline(h = 0, col = "salmon")
+```
+
+Looking at this plot, we see that the residuals seem to have no correlation whatsoever and are evenly distributed along the y = 0 line. This shows that our model on the difference (AR(3) model) is reasonable. 
+
+However, we still want to be very sure about this before making any speculations, so we will run 2 more tests on the residuals to prove it is a reasonable model. The first is by looking at the ACF plot:
+```{r}
+acf(m2$residuals)
+```
+
+As seen in the plot, only the first lag line is outside the dotted lines, meaning that our residuals are i.i.d and therefore our plot is reasonable. 
+
+We will still carry out the other test to make the answer more definitive. Here is the Ljung-Box test to give a number how independent the residuals are:
+```{r}
+Box.test(m2$residuals, type = "Ljung-Box")
+```
+
+Because our p-value is higher than 0.01 significance, we can safely conclude that our residuals are independent and therefore the model is reasonable. Now we can move to results where we speculate on the model.
+
+# Results
+
+This is our final model from the original data:
+```{r}
+sarima(data1$Anomaly, p = 3, d = 1, q = 0, details = FALSE)
+```
+
+Using this model, we can easliy predict future values for the data. We will demonstrate this by taking the last 6 years from the data as a test data and train the model again over the data left behind as a training data. We will then take this model and play it out on those last 6 years we set aside to show how accurate the model as predicting the future years:
+
+```{r}
+n = length(data1$Anomaly)
+#split data
+xnew <- data1$Anomaly[1:(n-6)]
+xlast <- data1$Anomaly[(n-5):n]
+#fit
+model5 <- arima(xnew,order = c(3,1,0))
+#prediction
+h <- 6
+m <- n - h
+fcast <- predict(model5, n.ahead=h)
+upper <- fcast$pred+1.96*fcast$se
+lower <- fcast$pred-1.96*fcast$se
+#plot
+plot.ts(xlast, xlim = c(m,n), xlab = "x",ylab = "y", main = "",  ylim = c(0.50, 1.40))
+polygon(c(166:171,171:166), c(upper,rev(lower)), col='light green', border=NA)
+lines(x=m+(1:h), y=fcast$pred,col='blue')
+lines(x=m+(1:h), y=xlast,col='black')
+legend("top", legend = c("true","fitted"), lty=c(1, 1), col = c("black","blue"))
+```
+
+
+
+
+# Conclusion and Discussion
+
+From the last graph, we can conclude that our model is fairly accurate at predicting the trend for temperature anomalies over the years as our testing set is also fairly accurate, with the biggest residual at around 0.3 degrees C for the testing data. Our predictions are within the prediction interval (the green highlight), also giving us a numerical point of view.
+
+In addition, in terms of temperature, this means our model is fairly accurate, as 0.3 degrees C is usually not noticeable for most people.
+
+
+# Code Appendix 
+For reference, this is the code we used for all the graphs
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE}
+```
+
+
+
+
+
+
+
+
+
+
+

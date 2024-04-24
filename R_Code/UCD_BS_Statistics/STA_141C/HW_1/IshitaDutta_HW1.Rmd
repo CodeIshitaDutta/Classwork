@@ -1,0 +1,194 @@
+---
+title: "STA 141C HW 1"
+author: "Ishita Dutta"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(MASS)
+library(mvtnorm)
+```
+
+# 1
+
+```{r}
+mat_vals = c(17, 3, 9, 4, 25, 21, 14, 22, 35)
+mat1 <- matrix(mat_vals,nrow=3,ncol=3,byrow=TRUE)
+mat1
+mat_upper = mat1
+mat_upper[mat_upper%%2==0] <- 0 #elements not divisible by 2 are replaced with 0 --> Upper matrix
+mat_upper
+mat_lower = mat1
+mat_lower[mat_lower%%3==0] <- 0 #elements not divisible by 3 are replaced with 0 --> Lower matrix
+mat_lower
+```
+
+```{r}
+mat_upper * mat_upper # Since we are squaring the matrix, we are multiplying 2
+# upper triangle matrices together.
+```
+
+This is also an upper triangle matrix.
+
+```{r}
+solve(mat_lower) # solve() is the R function to find the inverse of a matrix.
+```
+
+This is also a lower triangle matrix.
+
+```{r}
+matvals = c(1, 3, 9, 4, 1, 21, 14, 22, 1)
+mat2 <- matrix(matvals,nrow=3,ncol=3,byrow=TRUE)
+mat_upper_2 = mat2
+mat_upper_2[mat_upper_2%%2==0] <- 0 #elements not divisible by 2 are replaced with 0 --> Upper matrix
+mat_lower_2 = mat2
+mat_lower_2[mat_lower_2%%3==0] <- 0 #elements not divisible by 3 are replaced with 0 --> Lower matrix
+mat_lower_2 * mat_lower_2
+```
+
+Also a unit lower triangle matrix.
+
+```{r}
+solve(mat_upper_2)
+```
+
+Also unit upper triangle.
+
+# 2
+```{r}
+# givens
+a = 0.7
+b = 0.2
+c = 0.1
+
+#operations
+cat("a =",a, "b =", b, "c =", c)
+cat("\n(a + b) + c =", (a + b) + c)
+
+cat("\na + (b + c) =", a + (b + c))
+
+cat("\n(a + c) + b =", (a + c) + b)
+```
+
+They all print 1. Associative property holds true because no matter which two numbers are being added first, the total of all three numbers is the same = 1.
+
+
+# 3
+```{r}
+# set sequence
+x = seq(0.988,1.012,0.001)
+# y1 --> expanded, y2 --> not expanded
+y1 = (x ** 7) - 7*(x ** 6) + 21*(x ** 5) - 35*(x ** 4) + 35*(x ** 3) - 21*(x ** 2) + 7*(x) - 1
+y2 = (x - 1) ** 7
+#showing points y1 and y2
+data.frame(x, y1, y2)
+
+#plot the two graphs
+plot(x, y1)
+plot(x, y2)
+```
+
+Values are slightly different at certain points. The expanded polynomial graph is less coherent than the non-expanded(?) polynomial graph. Could be something to do with the rounding in either of the two equations. This is because we are calculating each of the terms separately in the expanded model because we are rounding each term before adding it. In the case of the non-expanded model, we are rounding after the entire calculation or at the end, so there is a higher chance of a streamlined/coherent graph to what a x^7 plot would look like.
+
+# 4
+```{r}
+# get data
+datvals = read.table('oringp.dat')
+# rename columns to accurate values
+colnames(datvals) = c('flight number', 'date', 'number of O-rings', 'number failed', 'temperature at launch')
+head(datvals)
+cor(datvals[1:length(datvals$date) - 1, c('number failed', 'temperature at launch')]) # correlation coefficients
+```
+The correlation for temperature and number of failures for all the launches except for the disaster is -0.5613284.
+
+# 5
+## a
+```{r}
+# set givens
+set.seed(020222)
+s0 = 1
+s1 = 2
+n = 100
+q = 5
+
+#calculate needed values
+mu = sample(seq(0, 10), size = 100, replace = TRUE)
+Z = matrix(sample(seq(0, 5), size = c(500), replace = TRUE), ncol = 5, byrow = TRUE)
+I = diag(100)
+cov = (s1**2)*(Z %*% t(Z)) + (s0**2)*I
+data.frame(cov[c(1:5), c(1:5)])
+dim(cov)
+
+#get regression
+Y = mvrnorm(mu = mu, Sigma =  cov)
+length(Y)
+```
+
+## b
+```{r}
+# log likelihood
+dmvnorm(Y, mu, cov, log=TRUE)
+```
+
+## c
+```{r}
+n <- 100
+q <- 5
+sigma0 <- 1
+sigma1 <- 2
+mu <- rnorm(n)
+Z <- matrix(rnorm(n*q), nrow=n)
+cross_Z = Z %*% t(Z)
+
+Sigma <- sigma1^2 * cross_Z + sigma0^2 * diag(n)
+y <- rmvnorm(n, mu, Sigma)
+log_dmvnorm <- dmvnorm(y, mean = mu, sigma = Sigma, log = TRUE)
+
+# evaluate log-density using Woodbury formula and matrix determinant lemma
+Iq <- diag(q)
+V <- Z %*% solve(Iq + sigma1^-2 * t(Z) %*% Z)
+U <- sigma1^-2 * Z
+Ainv <- solve(sigma0^2 * diag(n))  # inverse of (σ0^2 * I_n)
+log_dmvnorm_lowrank <- -log(2*pi)*n/2 - log(sigma0^2)*n/2 - log(det(Iq + sigma1^-2 * t(Z) %*% Z))/2 - (y - mu) %*% (Ainv - Ainv %*% U %*% solve(Iq + t(V) %*% Ainv%*% U) %*% t(U) %*% Ainv) %*% (y - mu)/(2 * sigma0^2)
+
+```
+
+## d
+```{r}
+# d
+dmvnorm_lowrank <- function(y, mu, Z, sigma0, sigma1, log = FALSE){
+  n <- length(y)
+  q <- ncol(Z)
+  A <- sigma0^2 * diag(n)
+  U <- Z
+  V <- t(Z)
+  Im <- diag(n)
+  
+  Sigma_inv <- solve(A) - solve(A) %*% U %*% solve(Im + V %*% solve(A) %*% U) %*% t(U) %*% solve(A)
+  log_det_Sigma <- sum(log(diag(Im + V %*% solve(A) %*% U))) + n*log(sigma0^2)
+  
+  log_dmvnorm_lowrank <- -n/2*log(2*pi) - 1/2*log_det_Sigma - 1/2*t(y-mu) %*% Sigma_inv %*% (y-mu)
+  
+  if(log){
+    return(log_dmvnorm_lowrank)
+  }else{
+    return(exp(log_dmvnorm_lowrank))
+  }
+}
+```
+
+## e
+```{r}
+# e
+#log_dmvnorm_lowrank <- dmvnorm_lowrank(y, mu, Z, sigma0, sigma1, log = TRUE)
+
+```
+
+
+
+
+
+
+

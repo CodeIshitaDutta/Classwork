@@ -1,0 +1,199 @@
+---
+title: "STA 141A: Assignment 3"
+author: "Ishita Dutta, 918193342"
+output: html_document
+---
+***
+
+**Instructions** You may adapt the code in the course materials or any sources (e.g., the Internet, classmates, friends). In fact, you can craft solutions for almost all questions from the course materials with minor modifications. However, you need to write up your own solutions and acknowledge all sources that you have cited in the Acknowledgement section. 
+
+Failing to acknowledge any non-original efforts will be counted as plagiarism. This incidence will be reported to the Student Judicial Affairs. 
+
+*** 
+
+$(1)$ We will revisit the `nycflights13` data set. Extract the entries in February from the `flights` and `weather` dataset using `filter()` and `%>%`. Join the two extracted data sets together by `origin` and `time_hour`. 
+You may want to use the `inner_join()` function for joining the data sets.
+
+
+$Solution 1:$
+```{r}
+library(nycflights13)
+library(tidyverse)
+febflight = flights %>% 
+  filter(month == 2) %>%
+  filter(is.na(arr_delay)!=TRUE)
+febweather = weather %>% 
+  filter(month == 2)
+d1 = inner_join(febflight, febweather, by=c('origin', 'time_hour')) #by only origin and time_hour
+head(d1)
+```
+
+
+***
+
+$(2)$ Create a scatter plot of arrival delay versus precipitation using the data set obtained in Part 1. Explain your findings.
+
+
+$Solution 2:$
+```{r}
+ggplot(d1, aes(x =  precip, y = arr_delay))  + geom_point(color = "light blue") + ggtitle("Arrival Delay vs Precipitation") + xlab("Arrival Delay") + ylab("Precipitation")
+```
+The data follows an exponential distribution, 
+
+***
+
+
+$(3)$ Create a polynomial expansion of the `precip` variable to the 15th degree using `poly()` function. 
+
+
+$Solution 3:$
+```{r}
+polyexpprecip = poly(d1$precip, degree = 15, raw = F)
+polyexpprecip[1:3, 1:4]
+```
+
+
+***
+
+
+$(4)$ Consider arrival delay as the outcome and the polynomial terms obtained in Part (3) as the covariates. Build a prediction model using linear regression with lasso. Select the tuning parameter using cross-validation. You may want to use the `cv.glmnet` function in `glmnet`. Report the fitted model.
+
+
+$Solution 4:$
+```{r}
+library(glmnet)
+model1 <- cv.glmnet(x=polyexpprecip, y = d1$arr_delay)
+plot(model1)
+
+```
+
+***
+
+
+$(5)$ Consider the `iris` data. Extract the data corresponding to the flower types  _versicolor_ and _virginica_, numbering a total of $100$ flowers. Set aside the first $10$ observations for each flower type as test data and use the remaining data consisting of 80 observations (with flower types as class labels) as training data.
+
+
+$Solution 5:$
+```{r}
+library(tidyverse)
+library(caret)
+library(MASS)
+
+d2 <- iris %>% filter(Species %in% c('versicolor', 'virginica'))
+dindex = c(1:10, 51:60)
+test_data = d2[dindex, ]
+train_data = d2[-dindex, ]
+```
+
+
+***
+
+
+$(6)$  Use _Linear Discriminant Analysis (LDA)_ for classifying the test data. Use Sepal.Length and Sepal.Width as the predictor variables (or features). You may want to use the function `lda()`.
+    a. Report the class-specific means of the predictor variables	for the training data.
+    b. Compute the _confusion matrix_ for the test data, and the misclassification error rate.
+
+
+$Solution 6:$
+```{r}
+
+lda(Species ~ ., data = test_data)
+#confusionMatrix(iris, test_data)
+```
+
+
+***
+
+
+$(7)$  Fit a logistic regression model to the training data, using the variables Sepal.Length and Sepal.Width as predictors. You may want to use `glm()` with argument `family = "binomial"`.
+    a. Obtain the estimates and their standard errors  for the model parameters. 
+    b.  Compute the _confusion matrix_ for the test data, and the misclassification error rate. 
+    c.  Are both the predictor variables necessary for the purpose of classification? Justify.
+
+
+$Solution 7:$
+```{r}
+train_data$Sdummy = train_data$Species =="versicolor"
+test_data$Sdummy = test_data$Species =="versicolor"
+
+model1 <- glm(Species ~ Sepal.Length + Sepal.Width, family = "binomial", data = train_data)
+summary(model1)
+
+x = exp(predict.glm(model1, newdata = test_data))
+pred = x/(1+x)
+
+observed = as.factor(as.numeric(test_data$Sdummy))
+predval = as.factor(as.numeric(pred > 0.5))
+
+confusionMatrix(data = predval, reference = observed)
+```
+It seems we do not need the Sepal.Width predictor, as the model reflects it to have a p-value of 0.41, which is not significant in terms of being a predictor. On the other hand, Sepal.Length seems to be an important predictor of the given data as it has a p-value of 3.07 * e ^ -5.
+
+
+
+***
+
+
+$(8)$ Fit a logistic regression model to the training data, using the variable Sepal.Length as the only predictor. 
+    a. Obtain the estimates and their standard errors for the model parameters. 
+    b. Compute the _confusion matrix_ for the test data, and the misclassification error rate. 
+    c. Compare the results with those in Question 7. Does your result in 8.b support the answer to 7.c?
+
+
+$Solution 8:$
+```{r}
+model2 <- glm(Species ~ Sepal.Length, family = "binomial", data = train_data)
+summary(model2)
+
+x2 = exp(predict.glm(model2, newdata = test_data))
+pred2 = x2/(1+x2)
+
+observed2 = as.factor(as.numeric(test_data$Sdummy))
+predval2 = as.factor(as.numeric(pred2 > 0.5))
+
+confusionMatrix(data = predval2, reference = observed2)
+```
+The fact that there was no change in the confusion matrix accuracy and interval shows the same as I said in problem 7, the width is not a necessary predictor. 
+
+
+***
+
+
+$(9)$  Use the _k Nearest Neighbors (kNN)_ classification method to classify the test data, using only Sepal.Length as the predictor variable. Perform this analysis using $k=1$ and $k=5$. In each case, compute the _confusion matrix_ for the test data, and the misclassification error rate.  You may want to use the `knn()` function.
+
+
+$Solution 9:$
+```{r, eval = FALSE}
+#I could not figure this one out, but this is what I had for code...
+library(class)
+model3= knn(train_data, test_data, cl = train_data$Species_dummy, k = 5)
+
+x3 = exp(predict.knn(model3, newdata = test_data))
+pred3 = x3/(1+x3)
+
+observed3 = as.factor(as.numeric(test_data$Sdummy))
+predval3 = as.factor(as.numeric(pred3 > 0.5))
+
+confusionMatrix(data = predval3, reference = observed3)
+```
+
+***
+
+
+$(10)$  Write a very brief summary (maximum of 200 words) about the comparative performance of the 
+		three different classification methods for this data set. 
+		
+$Solution 10:$
+I could not get the knn working, but the two previous models show us how significant each predictor is. The LDA model ranked out the four predictors, from which we Sepal.Width and Sepal.Length important as they are closer than the other predictors and had a negative linear discriminant. The logistic regression further pointed out that it is the Sepal.Length predictor that made the most difference in the species of the flower. 
+		
+***
+
+## Acknowledgement {-}
+Discussed questions 2 and 7 with Li Zijian. 
+
+## Session information {-}
+```{r}
+sessionInfo()
+```
+
+

@@ -1,0 +1,52 @@
+---
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r include = FALSE}
+# setting up libraries
+library(readxl)
+library(ggplot2)
+library(ggExtra)
+library(moments)
+```
+
+
+# 4.36)
+Women's national track records table 1.9
+```{r}
+# This is from the national track records for women data set, table 1.9
+## read the table
+track = read.table("T1-9.dat", sep="\t") 
+## set the column names
+colnames(track) = c("Country", "s100m", "s200m", "s400m", "min800m", "min1500m", "min3000m", "minMarathon")
+# getting the converted values
+track$mps100 = 100/track$s100m
+track$mps200 = 200/track$s200m
+track$mps400 = 400/track$s400m
+track$mps800 = 800/(track$min800m * 60)
+track$mps1500 = 1500/(track$min1500m * 60)
+track$mps3000 = 3000/(track$min3000m * 60)
+track$mpsmarathon = 42195/(track$minMarathon * 60)
+
+head(track)
+track2 = data.frame(track$s100m, track$s200m, track$s400m, track$min800m, track$min1500m, track$min3000m, track$minMarathon, track$mps100, track$mps200, track$mps400, track$mps800, track$mps1500, track$mps3000, track$mpsmarathon)
+track2 = as.matrix(track2)
+
+skew = data.frame(skewness(track2))
+
+kurt = data.frame(kurtosis(track2))
+```
+
+_Solution:_ From the skew table, we can see that there is an increasing right skew in the variables. In addition, we can see the increasing left skew when we convert the values to speeds rather than time measurements
+
+From the kurtosis table, we see that the 3000, distribution is the most peaked both when converted to speed and in the time measurement. In addition, we can see all of the kurtosis values are above 3, so they are more peaked distributions than flat distributions.
+
+
+
+
+
+

@@ -1,0 +1,51 @@
+---
+title: "Practice Project - STAR Data"
+author: "Ishita Dutta"
+date: "2/8/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Abstract 
+
+
+<span style='color:blue'> 
+A (very) short summary of the report. As an example, you can simply write one sentence for each section in the report. 
+</span>
+
+
+
+# Introduction
+
+
+We are looking at the data from project STAR, an experiment conducted in Tennessee seeing how student testing scores are impacted by class size and teacher aid across multiple grades. 
+
+In this project, we will be focusing only on students in grade 1 and looking at specifically their math test scores for. Here, we will try to answer whether class size really mattered in terms of scores for these first graders. In the case that a different class size really produced significantly differing results, we then want to look at which class size produces the most optimal conditions. In simpler terms, we want to see which class size ends up producing the highest math results amongst the first graders. 
+
+
+
+# Background 
+
+
+This is a part of the original report done between 1985 and 1989 [(source)](https://www.rdocumentation.org/packages/AER/versions/1.2-9/topics/STAR) in which multiple grades over a range of subjects were involved, and the conclusions even included which connotations of students benefited most from which class size. This data was collected from 79 schools over 4 years and not only collected average score, but the demographic and socioeconomic factors of every teacher and student per school.The sample size was kept large to avoid confounding in terms of the demographics, as well as avoiding the problem in size reduction by student movement.
+
+Overall, the results showed higher scores in smaller classes across average scores of all subjects. Influenced by the original project, the State of Tennessee decided to launch Project Challenge, in which it funded counties for reduced class sizes across grades K-3. 
+
+Though our analysis for this project is not this deep, we are looking forward to telling which class size is best for children trying to score optimally in mathematics in the first grade, provided that there really is a difference in score with the class size to begin with.
+
+
+# Descriptive analysis 
+```{r}
+library(haven)
+
+STAR = read_sav("./dataverse_files/STAR_Students.sav")
+```
+
+
+
+
+

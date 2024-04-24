@@ -1,0 +1,118 @@
+---
+title: "HW5 Ishita Dutta"
+author: "Ishita Dutta"
+date: "11/4/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+Treatment_means=c(250,265,268,269,288,273,270,269)
+Y_fit=matrix(Treatment_means,nrow=2,byrow=T)
+Y_fit
+library(reshape2); library(ggplot2)
+ggfit = melt(Y_fit, varnames = c("A", "B"), value.name =  "tmean")
+ggplot(data = ggfit, aes(x = B, y = tmean, group = A, col = A)) +
+  geom_point(size = 4) + geom_line(size = 2) + theme_bw() + ylab("Treatment Means")
+
+log_Y_fit=matrix(log(Treatment_means),nrow=2,byrow=T)
+log_Y_fit
+rownames(log_Y_fit) = paste0("A(i=", 1:2, ")")
+colnames(log_Y_fit) = paste0("B(j=", 1:4, ")")
+
+library(knitr)
+knitr::kable(log_Y_fit)
+library(reshape2); library(ggplot2)
+ggfit = melt(log_Y_fit, varnames = c("A", "B"), value.name =  "tmean")
+ggplot(data = ggfit, aes(x = B, y = tmean, group = A, col = A)) +
+  geom_point(size = 4) + geom_line(size = 2) + theme_bw() + ylab("Treatment Means")
+
+data <- read.table("eyecontact.txt")
+
+table(data[,2:3])
+a = 2; b = 2; n = 5
+Y = array(0, c(a, b, n))
+for(i in 1:nrow(data)){
+  Y[data[i,2], data[i,3], data[i,4]] = data[i, 1]
+}
+Y
+e = array(0, c(a,b,n))
+for(i in 1:n) e[,,i] = Y[,,i] - Y_fit
+
+e
+Y_fit = apply(Y, c(1,2), mean)
+rownames(Y_fit) = paste0("A(i=", 1:2, ")")
+colnames(Y_fit) = paste0("B(j=", 1:2, ")")
+
+library(knitr)
+knitr::kable(Y_fit)
+
+plot(rep(Y_fit,n),e,main="Residuals vs Fitted values",xlab="Fitted Values",ylab="Residuals")
+
+qqnorm(e)
+qqline(e)
+
+library(reshape2); library(ggplot2)
+ggfit = melt(Y_fit, varnames = c("A", "B"), value.name =  "Success")
+ggplot(data = ggfit, aes(x = B, y = Success, group = A, col = A)) +
+  geom_point(size = 4) + geom_line(size = 2) + theme_bw() + ylab("Success")
+
+Y_bar_A = apply(Y_fit, 1, mean)
+Y_bar_A
+
+Y_bar_B = apply(Y_fit, 2, mean)
+Y_bar_B
+
+Y_bar = mean(Y_fit)
+Y_bar
+
+SSA = n*b*sum((Y_bar_A-Y_bar)^2)
+SSA
+SSB = n*a*sum((Y_bar_B-Y_bar)^2)
+SSB
+SSTR = n*sum((Y_fit-Y_bar)^2)
+SSTR
+SSAB = SSTR-SSA-SSB
+SSAB
+SSE = sum(e^2)
+SSE
+SSTO = SSTR + SSE
+SSTO
+df_SSA = a-1
+df_SSA
+df_SSB = b-1
+df_SSB
+df_SSAB = (a-1)*(b-1)
+df_SSAB
+df_SSE = (n-1)*a*b
+df_SSE
+df_SSTO = n*a*b-1
+df_SSTO
+
+MSA = SSA/df_SSA
+MSA
+MSB = SSB/df_SSB
+MSB
+MSAB = SSAB/df_SSAB
+MSAB
+MSE = SSE/df_SSE
+MSE
+#Eye Contact/Gender Interaction Effect Test
+F_star = MSAB/MSE
+F_star
+
+qf(.90, df_SSAB, df_SSE)
+1-pf(F_star,df_SSAB,df_SSE)
+#Factor A(eye contact) Main Effect Test
+F_star=MSA/MSE
+F_star
+1-pf(F_star,df_SSA,df_SSE)
+#Factor B(gender) Main Effect Test
+F_star=MSB/MSE
+F_star
+1-pf(F_star,df_SSB,df_SSE)
+```

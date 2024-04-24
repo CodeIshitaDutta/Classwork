@@ -1,0 +1,41 @@
+---
+title: "Discussion 4 - Ishita Dutta"
+output: pdf_document
+---
+
+# Problem 1
+
+The ```if-then-else``` chain in R.
+(a)  Briefly describe the ```if-then-else``` function in your own words.
+
+  This function will check a given condition. If the said condition is true, then the code given under the IF block (true block) will run. Otherwise, the code given under the ELSE block (false block) will run.
+
+(b)  Provide an example of the function and describe the output.
+  We can check if the number of letters used in a word are over 5. If so, we print that the given is a word on old word count settings, otherwise we print that it is not a word in old word count settings.
+  
+```{r echo=TRUE}
+letter_count <- 7
+if (letter_count > 7) {
+    print('This counts as a word using old word count settings.')
+} else {
+    print('This does not count as a word using old word count settings.')  
+}
+```
+
+# Problem 2
+
+(a)  Compare and contrast lapply and sapply.
+
+  The lapply() function is useful for performing operations on list and returns a list of the same length as original set.
+
+  The sapply() function is the same as lapply, but returns a vector instead of a list.
+
+(b)  Provide an example using the one of the functions.
+```{r echo=TRUE}
+add_five_to_score <- function(x){
+  x+5
+}
+test_scores <- c(72,58,94,82,27,90,89,54,19,86)
+extra_credit_score <- sapply(test_scores, add_five_to_score)
+extra_credit_score
+```

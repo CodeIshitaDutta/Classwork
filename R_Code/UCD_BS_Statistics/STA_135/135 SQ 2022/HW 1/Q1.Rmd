@@ -1,0 +1,242 @@
+---
+title: "STA 135 HW 1"
+author: "Ishita Dutta, Raina Joby"
+date: "3/30/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r include = FALSE}
+# setting up libraries
+library(readxl)
+library(ggplot2)
+library(ggExtra)
+```
+
+
+# 1.6)
+
+## a)
+```{r warning = FALSE}
+#reading the data
+air <- read_excel("air_pollution.xlsx", col_names = FALSE, col_types = "numeric")
+colnames(air) <- c("Wind", "Solar", "CO", "NO", "NO2", "O3", "HC")
+head(air)
+
+# setting wind and solar values against each other as a graph
+g <- ggplot(air, aes(Wind, Solar)) + geom_count() + geom_smooth(method="lm", se=F)
+
+# plotting the marginal plot for wind and solar against each other
+ggMarginal(g, type = "histogram", fill="transparent")
+
+#histograms showing the dist of each given variable in the data set
+  #You can speculate the graphs on your own :)
+hist(air$Wind)
+hist(air$Solar)
+hist(air$CO)
+hist(air$NO)
+hist(air$NO2)
+hist(air$O3)
+hist(air$HC)
+pairs(air)
+
+# number of observations
+size = length(air$Wind)
+```
+
+## b)
+```{r}
+
+# means
+air = as.matrix(air)
+air_mean <- colMeans(air)
+cat("Means:\n", air_mean)
+
+# standard deviations for air data set
+air_sd = apply(air, 2, sd)
+cat( "\n\nStandard Deviations: \n", air_sd * (size/(size - 1)))
+
+
+# covariance matrix
+cat("\n\nCovariance Matrix:\n")
+data.frame(cov(air))
+
+# correlation matrix
+cat("\n\nCorrelation Matrix:\n")
+data.frame(cor(air))
+```
+
+# 1.9)
+
+## a)
+```{r}
+n = 8
+# The given table
+x1 = c(-6, -3, -2, 1, 2, 5, 6, 8)
+x2 = c(-2, -3, 1, -1, 2, 1, 5, 3)
+table1 = c(x1, x2)
+
+# The scatterplot
+plot(table1)
+
+# SS values
+ss11 = sd(x1) * n/(n - 1)
+ss12 = sd(table1) * n/(n - 1)
+ss22 = sd(x2) * n/(n - 1)
+cat("s 11:", ss11,
+    "\ns 12:", ss12,
+    "\ns 22:", ss22)
+```
+
+## b)
+```{r}
+#setting the rotating factor into code
+theta = (26 * pi)/180
+
+#now rotating both of the data vectors so that we get the question
+xt1 = (x1 * cos(theta)) + (x2 * sin(theta))
+xt2 = (-x1 * sin(theta)) + (x2 * cos(theta))
+
+#printing final values into a data frame
+data.frame(xt1, xt2)
+``` 
+
+## c)
+```{r}
+# the standard deviations for the rotated data
+sst11 = sd(xt1) * n/(n - 1)
+sst22 = sd(xt2) * n/(n - 1)
+cat("s-tilde 11:", sst11,
+    "\ns-tilde 22:", sst22)
+```
+
+## d)
+```{r}
+# new number of observations
+m = 9
+# new x1, x2 with added value
+nx1 = c(x1, 4)
+nx2 = c(x2, -2)
+
+# recalculating the rotated data on the new observations
+nxt1 = (nx1 * cos(theta)) + (nx2 * sin(theta))
+nxt2 = (-nx1 * sin(theta)) + (nx2 * cos(theta))
+
+# printing out the data with the new value and tilted
+dat = data.frame(nx1, nx2, nxt1, nxt2)
+colnames(dat) =  c("X1", "X2", "Xt1", "Xt2")
+dat
+
+# new ss values with tilt and extra val
+nsst11 = sd(nxt1) * m/(m - 1)
+nsst22 = sd(nxt2) * m/(m - 1)
+
+# applying the formula in code
+ntdist = sqrt(((nxt1^2)/nsst11)+((nxt2^2)/nsst22))
+
+# actual answer on the new value with the tilt
+ntdist[9]
+```
+
+## e)
+```{r}
+# getting the ss values with the added values
+ntable1 = c(nx1, nx2)
+nss11 = sd(nx1) * m/(m - 1)
+nss12 = sd(ntable1) * m/(m - 1)
+nss22 = sd(nx2) * m/(m - 1)
+
+# setup for getting the 1-19 formula into code...
+ct2 = ((cos(theta))^2)
+st2 = ((sin(theta))^2)
+cs2 = (2 * sin(theta) * cos(theta))
+
+# making the denominators for formula 1-19 understandable
+d1 = (nss11 * ct2) + (nss12 * cs2) + (nss22 * st2)
+d2 = (nss22 * ct2) + (nss12 * cs2) + (nss11 * st2)
+
+# getting the dist formula a11, a12, a22 values
+na11 = (ct2/(d1)) + (st2/(d2))
+na22 = (st2/(d1) + (ct2/(d2)))
+na12 = ((cs2 / 2)/(d1)) + ((cs2 / 2)/(d2))
+
+# formula 1-19 into code
+ndist = sqrt((na11 * (nx1^2))+(na12 * nx1 * nx2)+(na22 * (nx2^2)))
+
+# the actual answer.
+ndist[9]
+
+
+```
+
+# 1.18)
+```{r}
+# This is from the national track records for women data set, table 1.9
+## read the table
+track = read.table("T1-9.dat", sep="\t") 
+## set the column names
+colnames(track) = c("Country", "s100m", "s200m", "s400m", "min800m", "min1500m", "min3000m", "minMarathon")
+## print first five vals for checking
+head(track)
+
+# getting the converted values
+track$mps100 = 100/track$s100m
+track$mps200 = 200/track$s200m
+track$mps400 = 400/track$s400m
+track$mps800 = 800/(track$min800m * 60)
+track$mps1500 = 1500/(track$min1500m * 60)
+track$mps3000 = 3000/(track$min3000m * 60)
+track$mpsmarathon = 42195/(track$minMarathon * 60)
+
+head(track)
+
+size = length(track$s100m)
+# means
+##air = as.matrix(air)
+track2 = data.frame(track$s100m, track$s200m, track$s400m, track$min800m, track$min1500m, track$min3000m, track$minMarathon, track$mps100, track$mps200, track$mps400, track$mps800, track$mps1500, track$mps3000, track$mpsmarathon)
+track2 = as.matrix(track2)
+
+data.frame(colMeans(track2))
+data.frame(cor(track2))
+data.frame(cov(track2))
+```
+_Solution:_ The correlation magnitude gets smaller as the distances increase. This can be due to how a longer distance would require a higher amount of endurance on the runner's part. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

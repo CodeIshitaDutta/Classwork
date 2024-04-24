@@ -1,0 +1,202 @@
+---
+title: "STA141A_Project"
+author: "Ishita Dutta, 98193342"
+date: "3/13/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r Libraries, include = FALSE, echo=FALSE}
+#libraries:
+library(formatR)
+library(knitr)
+library(tidyverse)
+library(gridExtra)
+library(scales)
+library(lubridate)
+library(ggplot2)
+```
+
+
+
+# Background
+
+The world has gone through many changes in the last two years over the course of the COVID-19 pandemic. Over the course of the time, however, we have seen the power of a digital system, especially in the power to keep records. Today, we will look at the daily records of vaccination rates and COVID information for many countries around the world. 
+
+
+# Introduction
+
+Now that we know what the scope of this project is, we can get to our main question:
+
+__How does vaccination rated correlate to the case rate for various countries?__
+
+This question shows whether the vaccine is really effective in lowering covid case counts among various countries. For this study, we have chosen 33 different countries among 3 different population levels to show the correlation study. We have chosen this distinction mainly because the 33 chosen countries belong to WHO's West Pacific and South East Asian administrative regions. 
+
+The reasoning for these two specific regions is because they portray many diverse cultures and patterns, making our analysis more general. 
+
+The reason for dividing into three population groups is because there is a very different effectiveness of both the pandemic and the vaccine in different population groups is very different. In addition, it is easier to view case rate patterns when they are not pushed out of rank by larger/smaller countries having different rates due to population percentage difference. 
+
+# Descriptive Analysis
+
+## Data cleaning 
+
+```{r Raw COVID Data, include = FALSE}
+#First working with the raw WHO COVID data:
+raw_dat <- read_csv("https://covid19.who.int/WHO-COVID-19-global-data.csv")
+c1 = raw_dat[which(!is.na(raw_dat$Country_code)),c("Date_reported", "New_cases", "Cumulative_cases",  "New_deaths", "Country" , "WHO_region")]
+
+#getting the proper regions in the WHO set
+c2 = c1[c1$WHO_region %in% c("SEARO","WPRO"), ]
+# Sorting further into only keeping countries that are the same in both data sets
+notcount = c("Democratic People's Republic of Korea", "Timor-Leste", "American Samoa", "Brunei Darussalam", "Guam", "Lao People's Democratic Republic", "Marshall Islands","Micronesia (Federated States of)", "Northern Mariana Islands (Commonwealth of the)", "Palau", "Pitcairn Islands", "Republic of Korea", "Viet Nam")
+
+#Removing NA values
+covid =c2[!(c2$Country %in% notcount), ]
+```
+
+Looking at the WHO data, we recieve the following types of information:
+```{r}
+x = data.frame(matrix(c(colnames(covid)), nrow = 2, byrow = TRUE))
+colnames(x) = c("", "", "")
+x
+```
+
+Here, we do not see New deaths and WHO region useful anymore after sorting through this data to specify the countries we want, so we will not use this in the final cleaned dataset. 
+
+We do want to move onto the vaccine data set, for which we needed to merely change the names of the columns to suitable names for a table. 
+
+```{r Raw Vaccine Data, include = FALSE}
+# Now working on the Vaccine data
+vaccine = read.csv("daily-covid-vaccination-doses-per-capita.csv")
+
+#Getting the column names correct in the table
+vaccine_countries = vaccine[vaccine$Entity %in% c(unique(covid$Country)), c("Entity", "Day", "new_vaccinations_smoothed_per_million")]
+colnames(vaccine_countries)[colnames(vaccine_countries) == 'new_vaccinations_smoothed_per_million'] <- 'Vaccinated'
+colnames(vaccine_countries)[colnames(vaccine_countries) ==  'Entity'] <- 'Country'
+colnames(vaccine_countries)[colnames(vaccine_countries) == 'Day'] <-  'Date_reported'
+
+
+```
+
+## Raw Data
+
+From these two sets, we merged the data sets based on the country and the date, then removed all the NA values. This left us with the final types of information, which we can now specify as variables in our model and define them.
+```{r}
+# now merging the data based on the date and the country and the date for which the counts were reported
+merged3 = merge(covid, vaccine_countries, by = c("Country", "Date_reported") , all.x = FALSE)
+merged2 = merged3[, c("Country", "Date_reported", "Vaccinated", "New_cases", "Cumulative_cases")]
+# Restricting to the dates we want to analyze in (between ):
+
+
+# creating variable measuring the case rate per day for each day for each country
+merged2$Case_rate = merged2$New_cases / merged2$Cumulative_cases
+
+y = data.frame(matrix(c(colnames(merged2)), nrow = 2, byrow = TRUE))
+colnames(y) = c("", "", "")
+y
+
+
+
+```
+
+Here, we leave Country and Date reported as they are explanatory from above. We will move onto defining the other variables:
+
+Vaccinated --> smoothed vaccination rate per 1 million people for day
+
+New_cases, Cumulative_cases --> these are case counts reported daily
+
+Case_rate --> our response variable, which is the new cases/cumulative cases for the day.
+
+
+## Chosen Countries
+
+We now move onto the countries themseleves in the regions. Here, we have already pulled countries from the regions that do not match in the datasets, which leave us with the 33 countries we have. These get sorted into 3 population groups as follows (Populations have been for 2021):
+
+```{r}
+# now to sort the data based on the groupings on population
+## making vectors denoting the groupings first
+highpopcountries = c("Australia", "Bangladesh", "China", "India", "Indonesia", "Japan", "Malaysia", "Myanmar", "Philippines", "Sri Lanka", "Thailand")
+
+middlepopcountries = c("Bhutan", "Cambodia", "Fiji", "Maldives", "Mongolia", "Nepal", "New Zealand", "Papua New Guinea", "Singapore", "Solomon Islands", "Vanuatu")
+
+lowpopcountries = c("Cook Islands", "French Polynesia", "Kiribati", "Nauru", "New Caledonia", "Niue", "Samoa", "Tokelau", "Tonga", "Tuvalu", "Wallis and Futuna")
+
+z = data.frame(matrix(c(lowpopcountries, middlepopcountries, highpopcountries), ncol = 3, byrow = FALSE))
+colnames(z) = c("Under 300 Thousand People", "300 Thousand - 30 Million People", "Above 30 Million People")
+z
+
+
+```
+
+## Sort on time
+
+We have all the variables set, except time. This we choose the interval between June 6 2021 and October 12 2021 as all 33 countries have consistent reports between these dates. 
+```{r}
+merged = filter(merged2, Date_reported>= "2021-06-22", Date_reported<= "2021-10-12")
+```
+
+In the meantime, we will also sort through our data to get the subsets on the 3 population levels.
+
+While we are at it, let's plot the data to see what we are working with:
+```{r warning = FALSE}
+#Sorting country data on time based on above vector sorting:
+highpop =merged[(merged$Country %in% highpopcountries), ]
+middlepop =merged[(merged$Country %in% middlepopcountries), ]
+lowpop =merged[(merged$Country %in% lowpopcountries), ]
+
+par(mfrow = c(2, 2))
+ggplot(data=highpop, mapping=aes(x=Date_reported, y=Case_rate, color = Country)) +
+  geom_line()
+
+ggplot(data=middlepop, mapping=aes(x=Date_reported, y=Case_rate, color = Country)) +
+  geom_line()
+
+ggplot(data=lowpop, mapping=aes(x=Date_reported, y=Case_rate, color = Country)) +
+  geom_line()
+
+```
+We can already see a major impact of population values on the values.In general, we see a decreasing trend in the case rate as time progresses. This is because vaccination is a cumulative measurement, which are modeled as how much of the population has gotten the vaccine. Vaccination rate in this case, is % of 1 million people who got a vaccine that day. In practice though, we know this is a cumulative rate, as people would not be getting their vaccine daily like a vitamin. 
+
+
+# Ananlysis
+
+```{r}
+model1 = aov(Case_rate~Country+Date_reported + Vaccinated, data=highpop)
+summary(model1)
+```
+
+Looking at the summary of the model using country, date, and the vaccination status, we can sense that the vaccination rate is a very important parameter of the model, as the ANOVA table is showing that the variable itself is a significant value at significance alpha = 0.01. This means that if we had not considered the vaccination rate as an important variable in the model, we would see the given data in the extreme 1% of the graph. This reasoning is what makes the data so significant. 
+
+In fact, this is even more highlighted when we have a small population for the country:
+
+```{r}
+model2 = aov(Case_rate~Country+Date_reported + Vaccinated, data=lowpop)
+summary(model2)
+```
+
+
+# Discussion
+Because we see the vaccination rate as an important factor in the model, we can say that there is a high impact of the vaccination rate on predicting the case rate for the country on a certain day. We can bring this to mean that we will only see a decrease in the covid case rate when we have more people get vaccinated, as the relationship is an inverse one between vaccinations and case rates. 
+
+
+# Acknowledgement
+
+Vaccination data --> Our World In Data Dataset
+Country populations --> <Country name> population 2021. Sort based on first result, mainly from Statista.
+
+Asked Daniel Wallace feedback on project.
+
+
+# Appendix 
+For reference, this is the code I used:
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE}
+```
+
+
+# Session Info:
+```{r}
+sessionInfo()
+```

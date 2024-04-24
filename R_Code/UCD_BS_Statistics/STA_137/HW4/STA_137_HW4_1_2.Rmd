@@ -1,0 +1,122 @@
+---
+title: "Homework 4"
+author: "Ishita Dutta, Liyuan Lin, Ruize Xu"
+date: "2/19/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+# 1a
+```{r echo = FALSE}
+pvec = c(2, 3, 4)
+var2vec = c(7.246, 3.220, 3.216)
+myBIC <- function(p, var2) {
+  val1 = 100 * log(var2)
+  val2 = log(100) * p
+  return(val1 + val2)
+}
+finalvec = vector()
+for(i in 1:3) {
+  print(myBIC(pvec[i], var2vec[i]))
+}
+```
+
+# 1b
+Following the AR(2) model we found best fitting from the BIC Criterion in part (a):
+```{r echo = FALSE}
+x98 = 32.71
+x99 = 30.59
+x100 =27.55
+```
+
+```{r echo = FALSE}
+xt <- function(p1, p2) {
+  val1 = 0.499 * p1
+  val2 = -0.74 * p2
+  return(val1 + val2)
+}
+x101 = xt(x100, x99)
+x102 = xt(x101, x100)
+x103 = xt(x102, x101)
+x104 = xt(x103, x102)
+x105 = xt(x104, x103)
+predicted = c(x101,x102,x103,x104,x105)
+predicted
+```
+
+
+#1c
+```{r echo = FALSE}
+observed = c(26.99, 27.77, 30.36, 29.45, 30.15)
+xvals = c(101,102,103,104,105,101,102,103,104,105)
+boolvals = c("Predicted","Predicted","Predicted","Predicted","Predicted","Observed",
+             "Observed","Observed","Observed","Observed")
+predictobserved = c(predicted, observed)
+m1 = data.frame(xvals, predictobserved, boolvals)
+ggplot(data=m1, mapping=aes(x=xvals, y=predictobserved, color = boolvals)) +
+  geom_point()
+```
+This plot is not as accurate as I would like it but it is more accurate than the other models. The AR(1) model shows a similar pattern but is very distant from the observed. AR(2) and AR(3) models are both like the AR(2) model above, leading to the third variable added not being very useful in terms of prediction, therefore it is not needed. 
+
+# 2a
+```{r echo = FALSE}
+model2a = arima.sim(list(order = c(0,0,1), ma = 0.8), n = 400, sd = 1)
+acf(model2a)
+pacf(model2a)
+```
+Analysis for MA(1)
+
+#2b
+```{r echo = FALSE}
+model2b = arima.sim(list(order = c(0,0,2), ma = c(-0.8, 0.7)), n = 400, sd = 1)
+acf(model2b)
+pacf(model2b)
+```
+Analysis for MA(2)
+
+
+# 2c
+```{r echo = FALSE}
+model2c = arima.sim(list(order = c(2,0,0), ar = c(0.7, -0.7)), n = 400, sd = 1)
+acf(model2c)
+pacf(model2c)
+```
+
+
+# 2d
+```{r echo = FALSE}
+model2d = arima.sim(list(order = c(2,0,0), ar = c(-0.3, 0.4)), n = 400, sd = 1)
+acf(model2d)
+pacf(model2d)
+```
+# 2e
+
+```{r echo = FALSE}
+model2e = arima.sim(list(order = c(1,0,2), ar = - 0.8, ma = c(-0.8, 0.6)), n = 400, sd = 1)
+acf(model2e)
+pacf(model2e)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

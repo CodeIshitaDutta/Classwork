@@ -1,0 +1,31 @@
+tinytex::install_tinytex()
+install.package("tinytex")
+install.package("tinytex")
+tinytex::install_tinytex()
+install.packages("tinytex")
+install.packages("swirl")
+library(swirl)
+swirl()
+swirl::install_course("A_(very)_short_introduction_to_R")
+swirl()
+10^2 + 36
+((2019 - 2020)/2002) * 100
+A = 4
+a
+A
+A*5
+A = A+10
+rm(list = ls())
+B = c(3, 4, 5)
+(3+4+5)/3
+mean(x = B)
+mean(B)
+sum(c(4,5,8,11))
+rnorm(10)
+rnorm(10)
+rnorm(10, mean = 1.2, sd = 3.4)
+?rnorm
+x = rnorm(100)
+plot(x)
+setwd("~/Desktop/Code/R Code")
+savehistory("dataout.txt")

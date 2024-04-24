@@ -1,0 +1,133 @@
+---
+title: "STA 135 HW 3"
+author: "Ishita Dutta, Raina Joby"
+date: "5/6/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# 6.5
+
+## a)
+```{r}
+#xbar = matrix(c(46.1, 57.3, 50.4), nrow = 1)
+#stddev = matrix(c(101.3, 63.0, 71, 63, 80.2, 55.6, 71, 55.6, 97.4), nrow = 3)
+(sqrt(1686678.779))/14
+```
+Well, by a matrix calculator, the solution is above.
+this should be rejecting the null hypothesis.
+
+## b)
+
+
+# 6.6
+
+## a)
+```{r}
+# sum for treatment 2
+t21 = c(3, 1, 2)
+t22 = c(3, 6, 3)
+t2 = data.frame(t21, t22)
+t2m = colMeans(t2)
+covt2 = cov(t2)
+
+
+# sum for treatment 3
+t31 = c(2, 5, 3, 2)
+t32 = c(3, 1, 1, 3)
+t3 = data.frame(t31, t32)
+t3m = colMeans(t3)
+covt3 = cov(t3)
+
+# denominator
+n1 = length(t2$t21)
+n2 = length(t3$t31)
+denom = n1 + n2 - 2
+
+# S pooled
+
+spooled1 = (((n1 - 1)/denom)*(covt2)) + (((n2-1)/denom)*(covt3))
+spooled1
+cat("S-pooled: ", spooled1[1,1] + spooled1[2,2])
+```
+
+```{r}
+covx = matrix(c(100, 50, 50, 95), nrow = 2)
+covy = matrix(c(90, 46, 46, 87), nrow = 2)
+denom1 = 40 + 50 - 2
+spooled2 = (((n1 - 1)/denom1)*(covx)) + (((n2-1)/denom1)*(covy))
+sinv =(((1/40)+(1/50))*matrix(solve(spooled2), nrow = 2))
+
+```
+
+```{r}
+covx = matrix(c(190,96,96,182), nrow = 2)
+solve(covx) * 90^2
+```
+
+
+```{r}
+n1 = 40
+n2 = 50
+p = 2
+(((n1 + n2 - 2)*p)/(n1 + n2 - p - 1))*qf(0.05, p, n1 + n2 - p - 1)
+```
+
+
+
+
+
+## b)
+```{r}
+
+# This is the T2 value
+tmat = (t2m - t3m)
+T2 = (t2m - t3m) * (((1/n1)+(1/n2))*matrix(solve(spooled1), nrow = 2))
+tmat
+T2
+(T2[1, 1] * tmat[1]) + (T2[1, 2] * tmat[2]) + (T2[2, 1] * tmat[1]) + (T2[2, 2] * tmat[2]) 
+p = 2
+mult =((n1+n2 - 2)*p)/(n1 + n2 - p - 1)
+T2crit = mult * qf(0.99, p, n1 + n2 - p - 1)
+T2crit
+
+```
+Fail to reject Ho.
+
+## c)
+```{r}
+for(i in c(1:2)) {
+  upper = t2m[i] - t3m[i] + (sqrt(T2crit) * sqrt(((1/n1)+(1/n2))*(spooled1[i,i])))
+  lower = t2m[i] - t3m[i] - (sqrt(T2crit) * sqrt(((1/n1)+(1/n2))*(spooled1[i,i])))
+  cat('i =',i, ':', lower, upper, '\n')
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

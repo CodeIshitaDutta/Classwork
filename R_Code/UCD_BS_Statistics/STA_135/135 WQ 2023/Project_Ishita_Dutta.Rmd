@@ -1,0 +1,82 @@
+---
+title: "Project"
+author: "Ishita Dutta"
+date: "3/20/2023"
+output: html_document
+---
+
+Performing LDA on the fly data
+```{r setup}
+# All libraries are present here:
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(MASS)
+library(caret)
+
+# Reading the spreadsheet
+fly = data.frame(read.table("T6-15.dat"))
+set.seed(2023)
+```
+
+```{r}
+# Setting the Data Up
+colnames(fly) = c("Fly species", "wing length", "wing width","third palp length", "third palp width", "fourth palp length", "length of antennal segment 12", "length of antennal segment 13")
+head(fly)
+N = length(fly$`Fly species`)
+n = N / 10
+
+# Getting a sample
+setvals1 = sample.int(N, n)
+samplevals1 = fly[setvals1, ]
+head(samplevals1)
+setvals2 = sample.int(N, n)
+samplevals2 = fly[setvals2, ]
+head(samplevals2)
+setvals = c(setvals1, setvals2)
+testvals = fly[-setvals, ]
+
+# Variance:
+S1 = data.frame(cov(samplevals1))
+S2 = data.frame(cov(samplevals2))
+x_bar_1 = colMeans(samplevals1)
+x_bar_2 = colMeans(samplevals2)
+
+# Spooled
+divval = (n - 1) / (n + n - 2)
+spool = data.frame((divval* as.matrix(S1)) + (divval* as.matrix(S2)))
+spool_inv = data.frame(solve(as.matrix(spool)))
+spool_inv
+
+# w vector
+w_vec = data.frame(as.matrix(spool_inv) * (x_bar_1 - x_bar_2))
+w_vec
+
+# Transpose for classification
+w_vec_transpose = data.frame(t(as.matrix(w_vec)))
+w_vec_transpose
+
+# Classification Value
+classval = w_vec_transpose * (x_bar_1 + x_bar_2)
+classval
+
+
+```
+
+
+```{r}
+# test it out!
+test_output = testvals
+test_output$`class` = FALSE
+for(i in 1:length(testvals$`Fly species`)){
+  testing = w_vec_transpose * as.matrix(testvals[i,])
+  if (all(testing < classval)){
+    test_output[i, "class"] = 2
+  }
+  else{
+    test_output[i, "class"] = 1
+  }
+}
+test_output
+```
+
+

@@ -1,0 +1,180 @@
+---
+title: 'Assignment #4'
+author: "Ishita Dutta"
+date: "2/25/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# 1:
+
+```{r echo=FALSE, include=FALSE}
+library(palmerpenguins)
+library(tidyverse)
+library(ggplot2)
+library("kernlab")
+library(babynames)
+```
+
+This is a data set that has various size measurements for 3 species of penguin that live in the Palmer Archipelago. 
+```{r}
+summary(penguins)
+```
+
+# 2:
+
+```{r}
+avai_id = which((!is.na(penguins$bill_length_mm)))
+pingu = penguins[avai_id,c("species", "island", "bill_length_mm", "bill_depth_mm",
+                           "flipper_length_mm", "body_mass_g", "sex", "year")]
+summary(pingu)
+```
+
+This literally only removed two values, but still useful to get the invalid values out of the way. Here is the scatterplot on the values colored by species:
+
+```{r}
+ggplot(data=pingu, mapping=aes(x=bill_length_mm, y=body_mass_g, color = species)) +
+  geom_point()
+```
+# 3:
+
+```{r}
+spec.cluster<-pingu %>% select(bill_length_mm, body_mass_g) %>% as.matrix() %>% specc(centers=3)
+ggplot(data=pingu, mapping=aes(x=bill_length_mm, y=body_mass_g)) +
+  geom_point(color = spec.cluster)
+```
+The graph in question 2 tells us a difference based on the species, so that we are, to some degree, able to relate species to size. In this case, we see 3 distinct groups of sizes, which does not help as much if we are trying to make that type of speculation. On the other hand, 
+
+# 4:
+```{r}
+pingu$new_bill_length = scale(pingu$bill_length_mm)
+pingu$new_body_mass = scale(pingu$body_mass_g)
+spec.cluster1<-pingu %>% select(new_bill_length, new_body_mass) %>% as.matrix() %>% specc(centers=3)
+ggplot(data=pingu, mapping=aes(x=new_bill_length, y=new_body_mass)) +
+  geom_point(color = spec.cluster1)
+```
+This looks more like the first plot, where you can see three main groups that seem like they're divided on species. Looking closer though, some of the penguins have not been put into the same cluster as the rest of their species. This means that they could just be rather outliers for their species. 
+
+
+# 5:
+
+```{r}
+pingu.k3<- pingu %>% select(new_bill_length, new_body_mass) %>% as.matrix() %>% kmeans(centers=3)
+
+ck3 <- pingu.k3$cluster
+
+ggplot(pingu,aes(x=new_bill_length, y=new_body_mass,colour=ck3)) +
+  geom_point() + 
+  theme(legend.position = "none")
+
+```
+Very similar to the plot in #4 in terms of interpretation, however the bounds have changed a little, showing the difference in the way the spectral clustering and k means clustering work.
+
+# 6:
+
+```{r}
+spec.cluster2<-pingu %>% select(new_bill_length, new_body_mass) %>% as.matrix() %>% specc(centers=5)
+ggplot(data=pingu, mapping=aes(x=new_bill_length, y=new_body_mass)) +
+  geom_point(color = spec.cluster2)
+
+spec.cluster3<-pingu %>% select(new_bill_length, new_body_mass) %>% as.matrix() %>% specc(centers=8)
+ggplot(data=pingu, mapping=aes(x=new_bill_length, y=new_body_mass)) +
+  geom_point(color = spec.cluster3)
+```
+To be honest, when you know the true labels, this kind of graph looks very silly in the way that the points are clustered. In terms of when you don't know the true labels, both look like viable graphs, but the 5 cluster and 3 cluster still make more sense as opposed to 8 very small groups. In general, I believe a smaller number 
+
+
+# 7:
+
+This is a dataset that takes the names for babies registered in each year by their SSN and notes how many babies have been given the same first name. These are only for names that have been used more than 5 times between 1880 and 2017. Below is the summary information for the number of times each name has been used. The mean is worthy of being noted, as it is very different from the quantile information, which means that is greatly skewed by the values in the highest 25% of names. These are probably by the very common names, like the ones with over 6,000 - 7,000 appearances. 
+```{r}
+babynames
+summary(babynames$n)
+```
+
+# 8:
+
+```{r}
+baby1 = filter(babynames, n >= 500, year == 2017)
+```
+
+# 9:
+
+```{r}
+#male
+babynames.pre1 <- babynames %>% filter(sex == "M")
+baby.pre1.5 <- babynames %>% filter(year == 2017)
+babynames.pre2 <- babynames.pre1 %>% filter(name %in% baby.pre1.5$name)
+babynames.pre3 <- babynames.pre2[,c(-2,-4)]
+
+
+babynames.male <- babynames.pre3 %>%
+              group_by(year) %>%
+              pivot_wider(names_from = name,
+                          values_from = prop,values_fill=0)
+```
+
+```{r}
+#female
+babynames.pre1 <- babynames %>% filter(sex == "F")
+baby.pre1.5 <- babynames %>% filter(year == 2017)
+babynames.pre2 <- babynames.pre1 %>% filter(name %in% baby.pre1.5$name)
+babynames.pre3 <- babynames.pre2[,c(-2,-4)]
+
+
+babynames.female <- babynames.pre3 %>%
+              group_by(year) %>%
+              pivot_wider(names_from = name,
+                          values_from = prop,values_fill=0)
+head(babynames.female)
+```
+# 12:
+
+```{r}
+pc <- prcomp(babynames.female,
+             center = TRUE,
+            scale. = TRUE)
+attributes(pc)
+plot(x=babynames.female$year,y=pc$x[,1], pch=16,xlab="Year", ylab="PC 1", main = "Mary")
+plot(x=babynames.female$year,y=pc$x[,2], pch=16,xlab="Year", ylab="PC 1", main = "Anna")
+plot(x=babynames.female$year,y=pc$x[,3], pch=16,xlab="Year", ylab="PC 1", main = "Emma")
+plot(x=babynames.female$year,y=pc$x[,4], pch=16,xlab="Year", ylab="PC 1", main = "Elizabeth")
+plot(x=babynames.female$year,y=pc$x[,5], pch=16,xlab="Year", ylab="PC 1", main = "Minnie")
+```
+
+# Acknowledgements:
+I asked Daniel Wallace for help in terms of some code in questions 5 and 9.
+
+# Appendix
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

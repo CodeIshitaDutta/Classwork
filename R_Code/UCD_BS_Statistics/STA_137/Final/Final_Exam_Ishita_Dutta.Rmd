@@ -1,0 +1,226 @@
+---
+title: "Final"
+author: "Ishita Dutta, 98193342"
+date: "3/16/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r include = FALSE, echo = FALSE}
+library(tidyverse)
+library(forecast)
+```
+
+# 1:
+
+## a:
+
+$$
+X_t=Z_t+\theta Z_{t-1},\ \ \ where \ \ Z_t\mathop{\sim}\limits^{i.i.d}N(0,\sigma^2).
+$$
+ mu = 37; theta = 0:9, and sigma2 = 2.
+
+Autocovariance:
+$$
+\begin{aligned}
+\gamma(0)&=Var(X_t)=Var(Z_t+\theta Z_{t-1})=Var(Z_t)+\theta^2Var(Z_{t-1})=\sigma^2(1+\theta^2)=3.62\\
+\\
+\gamma(1)&=COV(X_t,X_{t-1})=COV(Z_t+\theta Z_{t-1},Z_{t-1}+\theta Z_{t-2})=\theta\sigma^2=1.8\\
+\\
+\gamma(h)&=0,\ \ \ where \ \ h\geq 2
+
+\end{aligned}
+$$
+
+
+Covariance:
+
+$$
+\begin{aligned}
+\rho(0)&=1\\
+\\
+\rho(1)&=\frac{\gamma(0)}{\gamma{(1)}}=\frac{\theta}{1+\theta^2}=0.497\\
+\\
+\rho(h)&=0,\ where \ \ \ h\geq 2
+\end{aligned}
+$$
+
+
+```{r}
+ mu = 37
+theta = 0.9
+sigma2 = 2
+
+specfunct = function(w) {
+  return(sigma2 * (1 + ((theta)^2) + (2 * theta * (cos(2 * pi * w)))))
+}
+w = c(0, 0.125, 0.25, 0.375, 0,5)
+for(i in c(1:4)) {
+  cat("w = ", w[i], "value = ", specfunct(w[i]), "\n")
+}
+
+vec = specfunct(w)
+
+
+
+plot(vec,w, type = "l", main = "Spectral Density of Yt and Xt",
+ylab = "spectrum",ylim=c(0,6))
+lines(vec, w, col = "blue")
+```
+
+
+## b:
+
+
+
+# 2:
+
+## a:
+
+## b:
+
+## c:
+```{r}
+ma1model = arima.sim(list(order = c(0,0,2), ma = c(0.7, 0.8)), n = 100, sd = sqrt(5.7))
+mamodel = arima(ma1model, order = c(0, 0 , 2))
+Box.test(mamodel$residuals, type = "Ljung-Box")
+```
+these are not iid...
+
+
+
+# 3:
+
+## a:
+Going off of the equation for an AR(1) model, we can tell the mean is 40.5 due to the constant and variance will be sigma^2 / (1 - phi^ 2), which is 9.22.
+
+
+## b:
+This is an ARMA(2, 2) series with order ar = c(1.2, -0.7) and ma = (0.9, -0.7). -37.1 is the mu, with error being present. This should follow the definition of the ARMA(2,2) model.
+
+## c:
+
+
+
+
+# 4:
+
+## a:
+
+```{r}
+mu = 44.9
+phi = 0.75
+var = 4.9
+x90 = 4.2
+
+myar1model = function(x) {
+  multi = phi * (x - mu)
+  return(multi + mu)
+}
+
+x91 = myar1model(x90)
+x92 = myar1model(x91)
+x93 = myar1model(x92)
+
+c(x91, x92, x93)
+```
+
+
+## b:
+```{r}
+upper.x93 = x93 + ( 1.96 * (sqrt(var)))
+lower.x93 = x93 - ( 1.96 * (sqrt(var)))
+c(lower.x93, upper.x93)
+```
+
+
+
+# 5:
+
+## a:
+
+We will hypothesize that the residuals of the models will be within a alpha = 0.05 test. For this, we will run the box test, in which we will determine the model better if it is within 0.05 from 1, ie. the p-value is above 0.95
+```{r}
+arma11model = arima.sim(list(order = c(1,0,1),ar = c(0.758), ma = c(0.562)), n = 120, sd = sqrt(8.582))
+
+arma21model = arima.sim(list(order = c(2,0,1),ar = c(0.681, 0.084), ma = c(0.605)), n = 120, sd = sqrt(8.551))
+
+arma11 = arima(arma11model, order = c(1, 0 , 1))
+arma21 = arima(arma21model, order = c(2, 0 , 1))
+
+Box.test(arma11$residuals, type = "Ljung-Box")
+Box.test(arma21$residuals, type = "Ljung-Box")
+```
+
+As given by the box test, we will go with the ARMA(1,1 model).
+
+## b:
+
+```{r}
+mybic = function (var, p) {
+  varmult = 120 * (log(var))
+  pmult = p * (log(120))
+  return(varmult + pmult)
+}
+mybic(8.582, 3)
+mybic(8.551, 4)
+```
+
+Yes, the BIC criterion matches, in which the ARMA(1, 1) model has a smaller BIC.
+
+## c:
+```{r}
+#fcast <- predict(arma11, n.ahead=3)
+#fcast$pred
+x119 = 58.8
+x120 = 59.2
+phi = 0.758
+theta = 0.562
+mu = 56.06
+var = 8.582
+e119 = -1.35
+e120 = 1.82
+myarmaforecast = function(x, ex) {
+  armult = phi * (x - mu)
+  mamult = theta * ex
+  return(armult + mamult + mu)
+}
+x121 = myarmaforecast(x120, e120)
+x122 = myarmaforecast(x121, e120)
+x123 = myarmaforecast(x122, e120)
+c(x121, x122, x123)
+
+```
+
+
+## d:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

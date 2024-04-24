@@ -1,3 +1,9 @@
 [submodule "Python/UCD_BS_Statistics/ECS_171/ECS171_Spotify_Addition_Recommendations"]
 	path = Python/UCD_BS_Statistics/ECS_171/ECS171_Spotify_Addition_Recommendations
 	url = https://github.com/CodeIshitaDutta/ECS171_Spotify_Addition_Recommendations.git
+[submodule "R_Code/R_Code/Coursera_Practice"]
+	path = R_Code/R_Code/Coursera_Practice
+	url = https://github.com/CodeIshitaDutta/datasciencecoursera.git
+[submodule "R_Code/Coursera_Practice"]
+	path = R_Code/Coursera_Practice
+	url = https://github.com/CodeIshitaDutta/datasciencecoursera.git

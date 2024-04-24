@@ -1,0 +1,291 @@
+---
+title: "HW 1"
+author: "Ishita Dutta"
+date: "4/14/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(combinat)
+library(gtools)
+library(survey) 
+```
+
+# Part 2)
+
+## a)
+
+```{r}
+pop <- c(15, 34, 35, 36, 11, 17, 36, 15)
+samples <- c()
+sums <- NULL
+sum_count <- NULL
+sumval <- NULL
+n <- 3
+N <- 8
+
+for (i in 1:8){
+  for (j in 1:8){
+    for (k in 1:8){
+      sample <- c( pop[i], pop[j],pop[k] )
+      samples <- rbind(samples, sample)
+      sval = pop[i] + pop[j] + pop[k]
+      if (sval %in% sumval){
+        index = match(sval, sumval)
+        sum_count[index] = sum_count[index] + 1
+      }
+      else {
+        sumval = c(sumval, sval)
+        sum_count = c(sum_count, 1)
+      }
+    }
+  }
+}
+#samples
+```
+
+## b)
+
+```{r}
+n = sum(sum_count)
+prob_vals = sum_count / n
+sum_probs = data.frame(sumval, sum_count, prob_vals)
+sum_probs
+
+```
+
+## c)
+
+```{r}
+n = sum(sum_probs$sum_count)
+z1 = 1/n
+z0 = (n-1)/n
+Z_vals = c(0,1)
+Z_probs = c(z0, z1)
+eZ = sum(Z_vals * Z_probs)
+varZ = sum(((Z_vals - eZ)^2) * Z_probs )
+
+z00 =z0^2 
+z10 = z1*z0
+z01 = z0*z1
+z11 = z1^2
+probszizj = c(z00, z01, z10, z11)
+covZ = 0
+for(i in c(1:2)) {
+  for (j in  c(1:2)) {
+    X = Z_vals[i]
+    Y = Z_vals[j]
+    covZ = covZ + ((Y - eZ)*(X - eZ)*(probszizj[i + j]))
+  }
+}
+corrZ = covZ/varZ
+corrZ
+```
+
+## d)
+
+```{r}
+nsums <- NULL
+nsum_count <- NULL
+nsumval <- NULL
+for(i in c(1:8)) {
+  for(j in c(1:7)) {
+    for(k in c(1:6)) {
+      nsval = pop[i] + pop[j] + pop[k]
+      #print(c(i,j, k))
+      if (nsval %in% nsumval){
+        index = match(nsval, nsumval)
+        nsum_count[index] = nsum_count[index] + 1
+      }
+      else {
+        nsumval = c(nsumval, nsval)
+        nsum_count = c(nsum_count, 1)
+      }
+    }
+  }
+}
+m = sum(nsum_count)
+nprob_vals = nsum_count/m
+nsum_probs = data.frame(nsumval, nsum_count, nprob_vals)
+nsum_probs
+```
+
+## e)
+
+```{r}
+nz1 = 1/m
+nz0 = (m-1)/m
+nZ_vals = c(0,1)
+nZ_probs = c(nz0, nz1)
+neZ = sum(nZ_vals * nZ_probs)
+nvarZ = sum(((nZ_vals - neZ)^2) * nZ_probs )
+
+nz00 =nz0^2 
+nz10 = nz1*z0
+nz01 = nz0*nz1
+nz11 = nz1^2
+nprobszizj = c(nz00, nz01, nz10, nz11)
+ncovZ = 0
+for(i in c(1:2)) {
+  for (j in  c(1:2)) {
+    X = nZ_vals[i]
+    Y = nZ_vals[j]
+    ncovZ = ncovZ + ((Y - eZ)*(X - eZ)*(probszizj[i + j]))
+  }
+}
+ncorrZ = ncovZ/nvarZ
+ncorrZ
+```
+
+## f)
+
+```{r}
+# with replacement
+e = sum(sum_probs$sumval * sum_probs$prob_vals)
+vari = sum(((sum_probs$sumval - e)^2) * sum_probs$prob_vals)
+cat("With Replacement:\n Mean:", e, "\nSE:", vari, "\n\n")
+
+# without replacement
+ne = sum(nsum_probs$nsumval * nsum_probs$nprob_vals)
+nvari = sum(((nsum_probs$nsumval - ne)^2) * nsum_probs$nprob_vals)
+cat("Without Replacement:\n Mean:", ne, "\nSE:", nvari)
+```
+
+# Part 3
+
+## a)
+
+```{r}
+members=c(28,4,3,4,4,2,1,0,2,1,1)
+publication = c(0,1,2,3,4,5,6,7,8,9,10)
+
+barplot(members, main = "Histogram of Faculty Members",ylab = "members",xlab = "publication")
+```
+
+_Solution:_ Shape of the data is very right skewed.
+
+## b)
+
+```{r}
+#member_mean = ((28*0)+(1*4)+(2*3)+(3*4)+(4*4)+(5*2)+(6*1)+(7*0)+(8*2)+(9*1)+(10*1))/50
+#member_mean
+n = 50
+N = 807
+weight <- rep(N/n, n)
+ans <- rep(publication, members)
+index <- c(1:50)
+published_faculty <- data.frame(index,ans)
+
+
+published_design <- svydesign(id = ~1, weights = weight, fpc = rep(N,n), data = published_faculty)
+ans <- svymean(~ans, published_design)
+ans
+###
+```
+
+## c)
+_Solution: _ No, since the distribution is right-skewed and SE is 0.3674, it is not right to define that the distribution is normally distributed.
+
+## d)
+
+```{r}
+# proportion of faculty members with no publications and give a 95% CI.
+p <- 28/n
+
+
+se <- sqrt(((p*(1-p))/n)*(1-n/N))
+se
+
+conf_int_pos <- p + (1.96*se)
+conf_int_neg <- p - (1.96*se)
+
+print(c(conf_int_neg, conf_int_pos))
+```
+
+_Solution:_ 95% C.I is [0.4267391 0.6932609]
+
+
+# Part 4)
+
+## a)
+
+```{r}
+n = 240
+age = c(9:20)
+num_children = c(13, 35, 44, 69, 36, 24, 7, 3, 2, 5, 1, 1)
+tab = data.frame(age, num_children)
+barplot(tab$num_children, names.arg=tab$age, ylab="Number of Children", xlab="Age", space = 0)
+```
+
+_Solution:_ The shape is not exactly normally distributed. It has a slight right skew in the histogram above. In this case, we would still assume normality by applying law of large numbers. 
+
+## b)
+
+```{r}
+# Getting probabilities of each value
+tab$prob = round(tab$num_children/n, 4)
+
+# mean
+tab.mean = sum(tab$age * tab$prob)
+cat("Mean:" , tab.mean, "\n")
+
+# SE
+vari = sum((tab$age^2) * tab$prob) - (tab.mean ^ 2)
+tab.se = sqrt(vari)/sqrt(240)
+cat("SE:" , tab.se, "\n")
+# CI
+lower = tab.mean - (tab.se * 1.96)
+upper = tab.mean + (tab.se * 1.96)
+qnorm(0.975)
+c(lower, upper)
+```
+
+## c)
+
+```{r}
+n0 = ((1.96 * sqrt(vari))^2)/(0.5^2)
+valn = (n0)/(1 + (n0/240))
+round(valn, 0)
+```
+
+# Part 5)
+
+## a)
+```{r}
+golf = read.csv("golfsrs.csv", header = TRUE)
+# print first 5 vals to show we have the table
+head(golf)
+
+# getting the histogram of wkday9
+hist(golf$wkday9)
+```
+
+_Solution:_ I would describe this as the graph for the exponential distribution. 
+
+## b)
+```{r}
+xbar = mean(golf$wkday9)
+cat("Mean:", round(xbar, 4), "\n")
+
+se = sd(golf$wkday9) * (length(golf$wkday9)/(length(golf$wkday9) - 1))
+cat("SE:", round(se, 4), "\n")
+```
+
+# Part 6)
+
+## b)
+
+Well, I don't have time to calculate this but smaller values of p generally need higher sample sizes.
+
+
+
+
+
+
+
+
+
+
+

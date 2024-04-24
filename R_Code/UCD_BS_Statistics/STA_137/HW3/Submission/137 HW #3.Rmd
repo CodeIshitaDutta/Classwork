@@ -1,0 +1,193 @@
+---
+title: "Homework #3"
+author: "Ishita Dutta, Ziyuan Lin, Ruize Xu"
+date: "February 12 2021"
+header-includes: \usepackage[fleqn]{amsmath}
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,warning=FALSE)
+library(tidyverse)
+library(ggplot2)
+```
+
+## Problem 1
+
+```{r}
+#Problem 1(a)
+set.seed(123)
+simMA1.1a<-arima.sim(n=275,model=list(c(ma=0.7)),sd=1)
+
+plot.ts(simMA1.1a)
+acf(simMA1.1a,lag.max = 10)
+```
+
+```{r}
+#Problem 1(b)
+set.seed(123)
+simMA2.1b<-arima.sim(n=275,model=list(ma=c(1.1,0.7)),sd=1)
+plot.ts(simMA2.1b)
+acf(simMA2.1b,lag=10)
+```
+
+
+The MA(2) graphs seems to have the wave of the lag much more apparent within the 10 breaks than the MA(1) graph. Essentially, the MA(2) graph has a more coordinated graph on the lag wave than the MA(1), with values closer to the horizontal lines than the MA(1) graph.
+
+
+
+
+## Problem 2
+
+
+
+### 2(a)
+
+
+For MA(1) model:
+$$
+X_t=Z_t+\theta Z_{t-1},\ \ \ where \ \ Z_t\mathop{\sim}\limits^{i.i.d}N(0,\sigma^2).
+$$
+
+For autocovariance:
+$$
+\begin{aligned}
+\gamma(0)&=Var(X_t)=Var(Z_t+\theta Z_{t-1})=Var(Z_t)+\theta^2Var(Z_{t-1})=\sigma^2(1+\theta^2)=11.48\\
+\\
+\gamma(1)&=COV(X_t,X_{t-1})=COV(Z_t+\theta Z_{t-1},Z_{t-1}+\theta Z_{t-2})=\theta\sigma^2=-5.6\\
+\\
+\gamma(h)&=0,\ \ \ where \ \ h\geq 2
+
+\end{aligned}
+$$
+
+
+For autocorrelation:
+$$
+\begin{aligned}
+\rho(0)&=1\\
+\\
+\rho(1)&=\frac{\gamma(0)}{\gamma{(1)}}=\frac{\theta}{1+\theta^2}\\
+\\
+\rho(h)&=0,\ where \ \ \ h\geq 2
+\end{aligned}
+$$
+
+
+### 2(b)
+
+$$
+
+\begin{align}
+
+&Var(\overline{X})=\frac{\tau_n^2}{n}, \ \ \ where \\
+\\
+&\tau^2_n=\gamma(0)+2\sum_{h=1}^{n-1}(1-\frac{h}{n})\gamma(h)=\gamma(0)+2(1-\frac{1}{n}\gamma(1))=(1+\theta^2)\sigma^2+2\cdot\frac{n-1}{n}\theta\sigma^2=0.3978947\\
+\\
+&Var(\overline{X})=\frac{\tau_n^2}{n}=0.004188366
+\end{align}
+$$
+
+
+
+### 2(c)
+
+When $\theta=0.8$, we get $Var(\overline{X})$=0.2374958.
+
+### 2(d)
+
+95% confidence interval for $\mu=E(X_t)$  is:
+
+$$
+(\overline{X}-1.96\frac{\tau_n}{\sqrt{n}},\overline{X}+1.96\frac{\tau_n}{\sqrt{n}})
+$$
+
+That is, $(37.11824,41.28176)$.
+
+## Problem 3
+
+### 3(a)
+
+In the case of AR(1) model, i.e.
+$$
+X_t-\mu=\phi(X_{t-1}-\mu)+\epsilon_t
+$$
+For $\gamma(0)$ and $\rho(h)$:
+$$
+\begin{aligned}
+&\gamma(0)=Var(X_t)=(1-\phi^2)^{-1}\sigma^2=19.44444\\
+\\
+&\rho(h)=\phi^h\\
+\\
+&\tau_n^2\approx\gamma(0)[1+2\sum_{h=1}^{\infty}\rho(h)]=\sigma^2/(1-\phi)^2=2.160494\\
+\\
+&Var(\overline{X_t})=\frac{\tau_n^2}{n}=0.02274204
+\end{aligned}
+$$
+
+
+### 3(b)
+
+When $\phi=0.8$, we get $Var(\overline{X})= 1.842105$.
+
+##4
+```{r}
+library(readxl)
+Unemp1948.2021 <- read_excel("Unemp1948-2021.xls",skip = 10)
+tm <- 1:74
+plot1 = plot.ts(Unemp1948.2021$UNRATE)
+acf(Unemp1948.2021$UNRATE,main = "acf plot")
+pacf(Unemp1948.2021$UNRATE,main = " PACF")
+data = Unemp1948.2021$UNRATE
+AR1 = arima(data,order = c(1,0,0))
+AR2 = arima(data,order = c(2,0,0))
+AR3 = arima(data,order = c(3,0,0))
+AR4 = arima(data,order = c(4,0,0))
+AR5 = arima(data,order = c(5,0,0))
+AR6 = arima(data,order = c(6,0,0))
+aic_table = data.frame(AR1$aic,AR2$aic,AR3$aic,AR4$aic,AR5$aic,AR6$aic)
+aic_table
+```
+choose AR 1 because smallest AIC value
+```{r}
+AR1
+AR1$coef
+residual_plot = plot(AR1$residuals) # residuals
+acf(AR1$residuals, main = " acf plot of residuals")
+test <- Box.test(AR1$residuals, lag = 10, type = "Ljung-Box")
+test
+```
+We do not reject the null hypothesis that residuals are i.i.d. or all the autocorrelations are zero.
+```{r}
+newdata = Unemp1948.2021$UNRATE[1:72]
+newdata
+ARn1  = arima(newdata,order = c(1,0,0))
+ARn2  = arima(newdata,order = c(2,0,0))
+ARn3  = arima(newdata,order = c(3,0,0))
+ARn4  = arima(newdata,order = c(4,0,0))
+ARn5  = arima(newdata,order = c(5,0,0))
+ARn6  = arima(newdata,order = c(6,0,0))
+aic_table2 = data.frame(ARn1$aic,ARn2$aic,ARn3$aic,ARn4$aic,ARn5$aic,ARn6$aic)
+aic_table2
+```
+we choose AR2 now because smallest aic value
+
+```{r}
+ARn2$coef
+u = mean(newdata)
+library(stargazer)
+stargazer(AR1,ARn2,type = "text")
+forecast_2020 = 0.9927 * (newdata[72]-u) - 0.2691 * (newdata[71] - u) + u
+forecast_2020
+forecast_2021 = 0.9927 * (forecast_2020-u) -0.2691 * (newdata[72] - u) + u
+forecast_2021
+predict(ARn2,n.ahead = 1)
+predict(ARn2,n.ahead = 2)
+```
+
+
+### Code Appendix
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE}
+```

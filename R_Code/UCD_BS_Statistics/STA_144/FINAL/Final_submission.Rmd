@@ -1,0 +1,448 @@
+---
+title: "Final"
+author: "Ishita Dutta"
+date: "6/8/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# All libraries are present here:
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(combinat)
+library(gtools)
+library(survey) 
+library("MASS")
+library(ggplot2)
+```
+
+# Question 1:
+
+The data `anthrop.csv` contains the length of the `middle finger` and the `height` of `N = 3000` criminals. We will treat this data set as a population of size `N = 3000`. You will select a random sample of `n = 200`. 
+
+```{r}
+# Chose to reinvent the wheel with all the formulas to make sure the values are the correct ones...
+set.seed(123)
+
+# Read the csv file first
+anthrop = read.csv('anthrop.csv')
+
+# Sample of 200 criminals, storing the sample
+sample_numbers.anthrop = sample.int(length(anthrop$finger), 200)
+sample.anthrop = anthrop[sample_numbers.anthrop, ]
+sample.anthrop
+# Setting variables based on given:
+N.anthrop = 3000
+n.anthrop = 200
+```
+
+## 1a)
+
+Estimate the average height based on a simple random sample of `n = 200` subjects and its standard error. Find a `95%` confidence interval.
+
+```{r}
+# Average height
+y_bar_s.anthrop = sum(sample.anthrop$height) / (n.anthrop - 1)
+
+# Standard error for average height
+s_sq_y_s.anthrop = sum((sample.anthrop$height - y_bar_s.anthrop)^2)
+se_y_bar_s.anthrop = sqrt((1 - (n.anthrop/N.anthrop))*((s_sq_y_s.anthrop)/(n.anthrop)))
+
+# Confidence interval
+z = qnorm(0.95) # Both N and n are large enough for a z interval, so using z interval
+low.anthrop = y_bar_s.anthrop - (se_y_bar_s.anthrop * z)
+high.anthrop = y_bar_s.anthrop + (se_y_bar_s.anthrop * z)
+y_bar_s.anthrop
+se_y_bar_s.anthrop
+c(low.anthrop, high.anthrop)
+```
+
+_Answer: _
+*   Mean height for sample --> 66.00503
+*   Standard error(sample mean height) --> 2.377899
+*   95% interval for mean height --> [62.09373, 69.91632]
+
+## 1b)
+
+Determine the sample size necessary to have an absolute error of at most 2 inches. Use the whole data set to calculate the variance and compare the estimate of `n` you get if you were to treat your current sample of `n = 200` as a pilot sample for a future survey.
+
+```{r}
+# Error value
+e = 2
+mean.height = sum(anthrop$height) / N.anthrop
+var.height = (1 / (N.anthrop - 1))*(sum((anthrop$height - mean.height)^2))
+var.height
+
+#Sample variance
+# N0
+n.naught.anthrop = ((z^2)*(s_sq_y_s.anthrop))/(e^2)
+
+# Without pilot sample
+round((n.naught.anthrop)/(1 + (n.naught.anthrop / N.anthrop)))
+
+# With pilot sample
+round((n.naught.anthrop)/(1 + (n.naught.anthrop /( N.anthrop - n.anthrop))))
+```
+
+_Answer: _ 
+*   When I use the n = 200 as a pilot sample, I find that my sample size calculation for any future surveys decreases from 644 when calculating without the pilot sample to 634 without it. Essentially, because we have a smaller number of value for the population, we end up with a smaller sample needed to get the error into the range. 
+*   Population variance is 6.542118.
+
+
+# Question 2:
+
+Use the same sample as obtained for problem 1.
+
+## 2a)
+
+Calculate the ratio estimate of the average height and its standard error using finger length as the auxiliary variable. Calculate a `95%` confidence interval.
+
+```{r}
+mean.anthrop.finger = sum(anthrop$finger)/N.anthrop
+
+x_bar_s.anthrop = sum(sample.anthrop$finger)/n.anthrop
+s_sq_x_s.anthrop = (sum((sample.anthrop$finger - x_bar_s.anthrop)^2)) * (1/(n.anthrop - 1))
+
+
+B_hat.anthrop = y_bar_s.anthrop / x_bar_s.anthrop
+
+y_bar_rat.anthrop = B_hat.anthrop * mean.anthrop.finger
+y_bar_rat.anthrop
+
+e_rat.anthrop = sample.anthrop$height - (B_hat.anthrop * sample.anthrop$finger)
+
+s_sq_e_rat.anthrop = (1 / (n.anthrop - 1)) * (sum(e_rat.anthrop ^ 2))
+var_y_bar_rat.anthrop = (1 - (n.anthrop/N.anthrop)) * ((mean.anthrop.finger/x_bar_s.anthrop)^2) * (s_sq_e_rat.anthrop/n.anthrop)
+
+(sqrt(var_y_bar_rat.anthrop))
+low_rat.anthrop = y_bar_rat.anthrop - ((sqrt(var_y_bar_rat.anthrop)) * z)
+high_rat.anthrop = y_bar_rat.anthrop + ((sqrt(var_y_bar_rat.anthrop)) * z)
+c(low_rat.anthrop, high_rat.anthrop)
+```
+
+_Answer: _
+*   Mean height for sample --> 65.63198
+*   Standard error(sample mean height) --> 0.1657905
+*   95% interval for mean height --> [65.35928, 65.90468]
+
+## 2b)
+
+Repeat the sample size determination but this time for the ratio estimate.
+
+```{r}
+# N0
+n.naught.anthrop = ((z^2)*((var_y_bar_rat.anthrop * n.anthrop)^2))/(e^2)
+# Without pilot sample
+(n.naught.anthrop)/(1 + (n.naught.anthrop / N.anthrop))
+```
+
+_Answer: _ While I think this is not right comparing to the previous question, the sample size I found was of 20 units...
+
+## 2c)
+
+Repeat estimation of average height but use a regression estimate and find the standard error
+
+```{r}
+r = cor(sample.anthrop$height, sample.anthrop$finger)
+b_hat_1_reg.anthrop = (r * (sqrt(s_sq_x_s.anthrop))) / ((sqrt(s_sq_y_s.anthrop)))
+b_hat_0_reg.anthrop = y_bar_s.anthrop - (b_hat_1_reg.anthrop * x_bar_s.anthrop)
+y_bar_reg.anthrop = b_hat_0_reg.anthrop + (b_hat_1_reg.anthrop * mean.anthrop.finger)
+y_bar_reg.anthrop
+e_reg.anthrop = sample.anthrop$height - (b_hat_0_reg.anthrop + (b_hat_1_reg.anthrop * sample.anthrop$finger))
+s_e_sq_reg.anthrop = (1 / (n.anthrop - 1)) * (sum((e_reg.anthrop)^2))
+se_y_bar_reg.anthrop = sqrt((1 - (n.anthrop/N.anthrop)) * (s_e_sq_reg.anthrop / n.anthrop))
+se_y_bar_reg.anthrop
+low_reg.anthrop = y_bar_reg.anthrop - ((se_y_bar_reg.anthrop) * z)
+high_reg.anthrop = y_bar_reg.anthrop + ((se_y_bar_reg.anthrop) * z)
+c(low_reg.anthrop, high_reg.anthrop)
+```
+
+_Answer: _
+*   Mean height for sample --> 66.00435
+*   Standard error(sample mean height) --> 0.1683183
+*   95% interval for mean height --> [65.72749, 66.28121]
+
+# Question 3:
+
+The question below refers to your results obtained in problems 1 and 2.
+
+## 3a)
+
+Compare the average height for all three methods on the basis of standard error. Which one you you prefer and why?
+
+_Answer: _ 
+Without considering the context of the data, I would choose a ratio estimate, as it has the smallest standard error in comparison to the other two estimators of the average height.
+
+## 3b)
+
+Compare ratio and regression estimate. Which one do you believe is more appropriate here? Why?
+
+_Answer: _
+
+
+# Question 4:
+
+The data file `baseball.csv` contains statistics on `N = 797` baseball players. You are asked to select a stratified random sample of `n = 200` players, using proportional allocation by `<League ID>`, `AL` vs `NL`.
+
+```{r}
+# Creating the datasets and subdata
+baseball = read.csv('baseball.csv')
+baseball_AL = baseball[baseball$leagueid == 'AL',]
+baseball_NL = baseball[baseball$leagueid == 'NL',]
+baseball_AL
+baseball_NL
+
+# Population sizes
+N.baseball = length(baseball$team)
+N.AL.baseball= length(baseball_AL$team)
+N.NL.baseball = length(baseball_NL$team)
+
+# Sample sizes
+n.baseball = 200
+n.AL.baseball = round((N.AL.baseball/N.baseball) * n.baseball)
+n.NL.baseball = round((N.NL.baseball/N.baseball) * n.baseball)
+
+# Selecting random units
+sample_numbers.AL.baseball = sample.int(N.AL.baseball, n.AL.baseball)
+sample_numbers.NL.baseball = sample.int(N.NL.baseball, n.NL.baseball)
+
+#New sample datasets
+sample.AL.baseball = baseball_AL[sample_numbers.AL.baseball, ]
+sample.NL.baseball = baseball_NL[sample_numbers.NL.baseball, ]
+sample.baseball = rbind(sample.AL.baseball,sample.NL.baseball)
+```
+
+## 4a)
+
+Calculate the average salary(use log salary for your calculations and then transform to salary) for each league based on your sample and the overall average based on your stratified sample. Calculate standard error and the `95%` confidence interval for each estimate.
+
+```{r}
+# Take the log of the values
+sample.AL.baseball$logsalary = log(sample.AL.baseball$salary)
+sample.NL.baseball$logsalary = log(sample.NL.baseball$salary)
+
+# Average values
+log_sal_bar_s.AL.baseball = (sum(sample.AL.baseball$logsalary)) / (n.AL.baseball)
+log_sal_bar_s.NL.baseball = (sum(sample.NL.baseball$logsalary)) / (n.NL.baseball)
+log_sal_bar_s.sample.baseball = (((N.AL.baseball)/(N.baseball)) * (log_sal_bar_s.AL.baseball)) + (((N.NL.baseball)/(N.baseball)) * (log_sal_bar_s.NL.baseball))
+
+# s squared values for x and y
+ssq_log_sal_bar_s.AL.baseball =(1/(n.AL.baseball - 1)) * (sum((sample.AL.baseball$logsalary - log_sal_bar_s.AL.baseball)^2))
+ssq_log_sal_bar_s.NL.baseball =(1/(n.NL.baseball - 1)) * (sum((sample.NL.baseball$logsalary - log_sal_bar_s.NL.baseball)^2))
+
+# standard error values and variance for x, y, and sample
+se_log_sal_bar_s.AL.baseball = sqrt((1 - (n.AL.baseball/N.AL.baseball)) * (ssq_log_sal_bar_s.AL.baseball/n.AL.baseball))
+se_log_sal_bar_s.NL.baseball = sqrt((1 - (n.NL.baseball/N.NL.baseball)) * (ssq_log_sal_bar_s.NL.baseball/n.NL.baseball))
+var_log_sal_bar_s.sample.baseball = ((1 - (n.AL.baseball/N.AL.baseball)) * ((N.AL.baseball/N.baseball)^2) * (ssq_log_sal_bar_s.AL.baseball/n.AL.baseball)) + ((1 - (n.NL.baseball/N.NL.baseball)) * ((N.NL.baseball/N.baseball)^2) * (ssq_log_sal_bar_s.NL.baseball/n.NL.baseball))
+
+
+#Confidence intervals
+high.AL.baseball = log_sal_bar_s.AL.baseball + (z * se_log_sal_bar_s.AL.baseball)
+low.AL.baseball = log_sal_bar_s.AL.baseball - (z * se_log_sal_bar_s.AL.baseball)
+high.NL.baseball = log_sal_bar_s.NL.baseball + (z * se_log_sal_bar_s.NL.baseball)
+low.NL.baseball = log_sal_bar_s.NL.baseball - (z * se_log_sal_bar_s.NL.baseball)
+high.sample.baseball = log_sal_bar_s.sample.baseball + (z * sqrt(var_log_sal_bar_s.sample.baseball))
+low.sample.baseball = log_sal_bar_s.sample.baseball - (z * sqrt(var_log_sal_bar_s.sample.baseball))
+
+# Answers:
+## For AL:
+log_sal_bar_s.AL.baseball
+se_log_sal_bar_s.AL.baseball
+c(low.AL.baseball,high.AL.baseball)
+
+## For NL:
+log_sal_bar_s.NL.baseball
+se_log_sal_bar_s.NL.baseball
+c(low.NL.baseball,high.NL.baseball)
+
+## For Overall:
+log_sal_bar_s.sample.baseball
+sqrt(var_log_sal_bar_s.sample.baseball)
+c(low.sample.baseball,high.sample.baseball)
+```
+
+_Answer: _
+AL
+*   Mean height for sample --> 13.90534
+*   Standard error(sample mean) --> 0.1102759
+*   95% interval for mean --> [13.72396, 14.08673]
+
+NL
+*   Mean height for sample --> 13.79668
+*   Standard error(sample mean) --> 0.1051451
+*   95% interval for mean --> [13.62373, 13.96963]
+
+Overall
+*   Mean height for sample --> 13.8474
+*   Standard error(sample mean) --> 0.07611165
+*   95% interval for mean --> [13.72221, 13.97259]
+
+
+## 4b)
+
+Calculate the total number of games played, again for each league and the combines estimate with standard errors and `95%` confidence intervals.
+
+```{r}
+# Mean games
+games_bar_s.AL.baseball = (sum(sample.AL.baseball$gplay)) / (n.AL.baseball)
+games_bar_s.NL.baseball = (sum(sample.NL.baseball$gplay)) / (n.NL.baseball)
+games_bar_s.sample.baseball = (((N.AL.baseball)/(N.baseball)) * (games_bar_s.AL.baseball)) + (((N.NL.baseball)/(N.baseball)) * (games_bar_s.NL.baseball))
+
+# Total games
+games_t.AL.baseball = N.AL.baseball * games_bar_s.AL.baseball
+games_t.NL.baseball = N.NL.baseball * games_bar_s.NL.baseball
+games_t.sample.baseball = games_t.AL.baseball + games_t.NL.baseball
+
+
+# s squared values for games
+ssq_games_t.AL.baseball =(1/(n.AL.baseball - 1)) * (sum((sample.AL.baseball$gplay - games_t.AL.baseball)^2))
+ssq_games_t.NL.baseball =(1/(n.NL.baseball - 1)) * (sum((sample.NL.baseball$gplay - games_t.NL.baseball)^2))
+
+# standard errors for games
+se_games_t.AL.baseball = (sqrt((1 - (n.AL.baseball/N.AL.baseball)) * (ssq_games_t.AL.baseball/n.AL.baseball)))
+se_games_t.NL.baseball = (sqrt((1 - (n.NL.baseball/N.NL.baseball)) * (ssq_games_t.NL.baseball/n.NL.baseball)))
+var_games_t.sample.baseball = ((1 - (n.AL.baseball/N.AL.baseball)) * ((N.AL.baseball/N.baseball)^2) * (ssq_games_t.AL.baseball/n.AL.baseball)) + ((1 - (n.NL.baseball/N.NL.baseball)) * ((N.NL.baseball/N.baseball)^2) * (ssq_games_t.NL.baseball/n.NL.baseball))
+
+
+# Confidence intervals
+high.games.AL.baseball = games_t.AL.baseball + (z * se_games_t.AL.baseball)
+low.games.AL.baseball = games_t.AL.baseball - (z * se_games_t.AL.baseball)
+high.games.NL.baseball = games_t.NL.baseball + (z * se_games_t.NL.baseball)
+low.games.NL.baseball = games_t.NL.baseball - (z * se_games_t.NL.baseball)
+high.games.sample.baseball = (games_t.sample.baseball + (z * sqrt(var_games_t.sample.baseball)))
+low.games.sample.baseball = (games_t.sample.baseball - (z * sqrt(var_games_t.sample.baseball)))
+
+# Printing answers
+## AL
+games_t.AL.baseball
+se_games_t.AL.baseball
+c(low.games.AL.baseball,high.games.AL.baseball)
+
+## NL
+games_t.NL.baseball
+se_games_t.NL.baseball
+c(low.games.NL.baseball,high.games.NL.baseball)
+
+## Overall
+games_t.sample.baseball
+sqrt(var_games_t.sample.baseball)
+c(low.games.sample.baseball,high.games.sample.baseball)
+
+
+```
+
+_Answer: _
+AL
+*   Total height for sample --> 22872
+*   Standard error(sample total) --> 2059.555
+*   95% interval for total --> [19484.33, 26259.67]
+
+NL
+*   Total height for sample --> 30727.1
+*   Standard error(sample total) --> 2575.522
+*   95% interval for total --> [26490.75, 34963.46]
+
+Overall
+*   Total height for sample --> 53599.1
+*   Standard error(sample total) --> 1676.398
+*   95% interval for total --> [50841.67, 56356.53]
+
+# Question 5:
+
+Use the baseball data from problem 4.
+
+## 5a)
+
+Take a one stage cluster sample(SRS of clusters) of `n = 10 teams` (clusters) and estimate average salary and the standard error plus calculate a `95%` confidence interval.
+
+```{r}
+allteams.baseball = c(unique(baseball$team))
+
+# Clusters are of unequal size...
+lengthvals = vector()
+for (i in c(1:length(allteams.baseball))) {
+  datset = baseball[baseball$team == allteams.baseball[i], ]
+  length(datset$salary)
+  lengthvals = c(lengthvals, length(datset$salary))
+}
+
+# Total number of units in population:
+K = length(baseball$team)
+n.cluster.baseball = 10
+N.cluster.baseball = length(allteams.baseball)
+
+```
+
+```{r}
+# Getting a sample of n = 10 clusters and their lengths
+allteams_sample.baseball = sample.int(length(allteams.baseball), 10, replace = FALSE)
+teams.cluster.baseball = baseball[baseball$team%in%allteams.baseball[allteams_sample.baseball],]
+teamnames.cluster.baseball = c(unique(teams.cluster.baseball$team))
+teams.cluster.baseball.size = lengthvals[allteams_sample.baseball]
+teams.cluster.baseball
+
+# totals for each cluster
+totals.cluster.baseball = vector()
+for(i in c(1:10)) {
+  total = sum(teams.cluster.baseball$salary[teams.cluster.baseball$team == teamnames.cluster.baseball[i]])
+  totals.cluster.baseball = c(totals.cluster.baseball, total)
+}
+
+# total overall population
+totval.cluster.baseball=(N.cluster.baseball/n.cluster.baseball)*(sum(totals.cluster.baseball))
+
+
+# mean estimate overall population
+ybar.cluster.baseball = totval.cluster.baseball/K
+ybar.cluster.baseball
+```
+
+```{r}
+ssqt = (1/(n.cluster.baseball - 1)) * (sum((totals.cluster.baseball - (totval.cluster.baseball/N.cluster.baseball))^2))
+# Variance for total
+vart = (N.cluster.baseball ^ 2) * (1 - (n.cluster.baseball/N.cluster.baseball)) * (ssqt / n.cluster.baseball)
+# Variance for mean
+vmean = vart/(K ^ 2)
+
+# Confint for mean
+high = ybar.cluster.baseball + (z * (sqrt(vmean)))
+low = ybar.cluster.baseball - (z * (sqrt(vmean)))
+c(high, low)
+```
+
+_Answer: _
+
+## 5b)
+
+Repeat the calculation in `a` but this time take a one stage cluster  sample of `n = 10` clusters with replacement with probability proportional to size using Lahiri's method. Calculate average salary, standard error and `95%` confidence interval. Do your results differ? Explain.
+
+```{r}
+# Max value Mi
+maxMi.baseball = max(lengthvals)
+
+# Lahiri's method for a sample, calculated by hand to not change the table repeatedly
+# All numbers were different for me:
+xvec = c(9, 30, 25, 18, 6, 2, 13, 11, 3, 20)
+sample.lahiri = baseball[baseball$team %in% allteams.baseball[xvec], ]
+xvals = c(unique(sample.lahiri$team))
+sample.lahiri
+```
+
+```{r}
+lengthvals.lahiri = lengthvals[xvec]
+phivals = lengthvals.lahiri / K
+ti = vector()
+for(i in c(1:10)) {
+  total = sum(sample.lahiri$salary[sample.lahiri$team == xvals[i]])
+  ti = c(ti, total)
+}
+tphi = (sum(ti/phivals)) / 10
+vartphi = sqrt((1/10) * (1 / (10 - 1)) * (sum(((ti/phivals) - tphi)^2)))
+vartphi
+```
+
+_Answer: _
+
+
+# Question 6:
+Essentially as all the ssus are sampled, ti is unbiased, so all calculations from ti are also unbiased,therefor Variance is also unbiased.

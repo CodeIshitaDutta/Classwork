@@ -1,0 +1,73 @@
+---
+title: "Homework 6"
+author: "Ishita Dutta"
+date: "11/11/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1a)
+```{r}
+eyec = read.table("eyecontact.txt")
+n = 5
+a = 2
+b = 2
+
+A1 <- subset(eyec, eyec[,2] == 1)
+A2 <- subset(eyec, eyec[,2] == 2)
+B1 <- subset(eyec, eyec[,3] == 1)
+B2 <- subset(eyec, eyec[,3] == 2)
+
+A1B1 <- subset(A1, A1[,3] == 1)
+A1B2 <- subset(A1, A1[,3] == 2)
+A2B1 <- subset(A2, A2[,3] == 1)
+A2B2 <- subset(A2, A2[,3] == 2)
+
+Y1.. = mean(A1[,1])
+Y2.. = mean(A2[,1])
+Y.1. = mean(B1[,1])
+Y.2. = mean(B2[,1])
+
+Y11. = mean(A1B1[,1])
+Y12. = mean(A1B2[,1])
+Y21. = mean(A2B1[,1])
+Y22. = mean(A2B2[,1])
+
+SSE = sum((A1B1[,1]-Y11.)^2)+sum((A1B2[,1]-Y12.)^2)+sum((A2B1[,1]-Y21.)^2)+sum((A2B2[,1]-Y22.)^2)
+MSE = SSE/((n-1)*a*b)
+SY = sqrt(MSE / (b * n))
+
+ME1a =qt(1 - 0.005, (n-1)*a*b) * SY
+cat("Confidence interval for Y1.. is [", Y1.. - ME1a, "," , Y1.. + ME1a,"]." )
+
+```
+The interpretation of this is that I am 99% confident that the true mean of the treatments where there is eye contact is present is within this interval.
+
+1b)
+```{r}
+cat("Confidence interval for Y.2. is [", Y.2. - ME1a, "," , Y.2. + ME1a,"]." )
+```
+The interpretation of this is that I am 99% confident that the true mean of the treatments where the personnel officer is female is within this interval.
+
+1c)
+```{r}
+D1 = Y2.. - Y1..
+SD = sqrt((2*MSE)/ (b * n))
+#bonferroni number
+ME1c =qt(1-(0.95/4),(n*b-1)*(n-1)) * SD
+cat("Confidence interval for D1 is [", D1 - ME1c, "," , D1 + ME1c,"]." )
+cat("Confidence interval for D2 is [", D2 - ME1c, "," , D2 + ME1c,"]." )
+```
+The true difference of means displayed in these intervals are of the presence of eye contact and the gender of the office personnel.
+
+1d)
+```{r}
+cat("Confidence interval for Y21.. is [", Y21. - ME1a, "," , Y21. + ME1a,"]." )
+```
+The interpretation of this is that I am 99% confident that the true mean of the treatments where the personnel officer is male and the eye contact is absent is within this interval.
+
+
+2a)

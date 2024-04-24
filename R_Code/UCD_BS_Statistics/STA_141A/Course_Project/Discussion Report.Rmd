@@ -1,0 +1,64 @@
+---
+title: "Discussion Report"
+author: "Ishita Dutta (918193342)"
+date: "2/25/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Overall Impression
+
+
+### Feedback
+
+1) Elaborate on your main question
+
+2) To justify your question, keep in mind the analysis will likely show a correlation not a causation and such information will not necessarily be sufficient to satisfy vaccine skepticism and 
+
+3) Justify using Indonesia and Turkey in particular as case studies for your analysis if you choose to do so in your final report.
+
+### My Summary and Speculation
+
+In the case of points 1 and 2, I should show my question as looking at the correlation between the cumulative vaccination graphs and the new cases graphs. 
+
+In the case with Indonesia and Turkey, these were examples where the case counts were in a similar range. This will be important in the future, should I choose an iteration that would require me to sort on a range of new case counts. 
+
+
+# Comments
+
+### Feedback
+My comments are organized by the sections in the draft report.
+
+Question: This is a good central question to help facilitate people’s understanding of covid-19 prevention. However, you may want to elaborate on the different ways vaccines may affect covid-19 transmission as sub-questions. For instance, how do they affect transmission for different age-groups? What is the relative/absolute effectiveness of vaccines in preventing transmission between countries with different general health statuses? Is there a significant difference in effectiveness of different vaccine types at preventing spread? And various combinations of these questions.
+
+Given Data and Progress: I do not think we can show a causation relationship between vaccine administration and virus transmission decline, only correlation. In addition, there is more than one type of vaccine, so be sure to specify which vaccine you are referring to if you are conducting an analysis for “the vaccine”. Lastly, an analysis that provides evidence that a vaccine type helps prevent transmission may encourage people who are not vaccinated to get a vaccine shot, but being against getting a shot is much more complicated than one’s understanding of its effectiveness. So such an analysis may help, but is not necessarily sufficient.
+
+It is unclear to me why you chose Indonesia and Turkey in particular to compare virus cases. Is it that they are particularly representative of a large number of countries in certain ways? Is it that you want the audience for your report to be people from those countries for personal reasons? These and others are valid reasons, but state what they are if you intend to use these countries for your analysis in your final report. Also, explain what the WHO data is on first reference.
+
+### My Summary and Speculation
+
+1. Note the question like I said in the overview. Make sure to note that this is over vaccination progress in general as there are many varying brands only present in some countries to avoid a lot of confusion deterring from the main question.
+
+2. Show correlation between vaccination practices and cases. 
+
+3. Explain any potential grouping I do with the countries. 
+
+4. Remaining questions are very interesting for future projects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

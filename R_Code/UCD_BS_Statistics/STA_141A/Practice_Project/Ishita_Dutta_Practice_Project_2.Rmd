@@ -1,0 +1,127 @@
+---
+title: "Practice Project - STAR Data"
+author: "Ishita Dutta"
+date: "2/8/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = FALSE, tidy = FALSE)
+```
+
+
+# Abstract 
+
+We will be taking the Project STAR data and analyzing how class sizes affected first graders in terms of mathematics scores. In this, I have chosen to list mean and use boxplots to show summary statistics and how much of a pull outliers can potentially have on any models we create. Here, we are using a standard ANOVA table and Tukey's test in order to see which class size is most significantly optimal, since the ANOVA table points out that there is a significance with class size. The Tukey's test shows us that the smallest class size helped students the most with their test scores. This can be inferred as a result of students having more time to ask questions to the teacher from the smaller class size, as well as a more personalized learning curve, since the teacher has less people they have to focus on.
+
+
+
+# Introduction
+
+
+We are looking at the data from project STAR, an experiment conducted in Tennessee seeing how student testing scores are impacted by class size and teacher aid across multiple grades. 
+
+In this project, we will be focusing only on students in grade 1 and looking at specifically their math test scores for. Here, we will try to answer whether class size really mattered in terms of scores for these first graders. In the case that a different class size really produced significantly differing results, we then want to look at which class size produces the most optimal conditions. In simpler terms, we want to see which class size ends up producing the highest math results amongst the first graders. 
+
+
+
+# Background 
+
+
+This is a part of the original report done between 1985 and 1989 [(source)](https://www.rdocumentation.org/packages/AER/versions/1.2-9/topics/STAR) in which multiple grades over a range of subjects were involved, and the conclusions even included which connotations of students benefited most from which class size. This data was collected from 79 schools over 4 years and not only collected average score, but the demographic and socioeconomic factors of every teacher and student per school.The sample size was kept large to avoid confounding in terms of the demographics, as well as avoiding the problem in size reduction by student movement.
+
+Overall, the results showed higher scores in smaller classes across average scores of all subjects. Influenced by the original project, the State of Tennessee decided to launch Project Challenge, in which it funded counties for reduced class sizes across grades K-3. 
+
+Though our analysis for this project is not this deep, we are looking forward to telling which class size is best for children trying to score optimally in mathematics in the first grade, provided that there really is a difference in score with the class size to begin with.
+
+
+# Descriptive analysis 
+```{r}
+#Getting data properly to begin with
+library(haven)
+STAR = read_sav("STAR_Students.sav")
+avai_id = which(!is.na(STAR$g1tmathss))
+data = STAR[avai_id,c("g1tmathss", "g1schid", "g1classtype", "g1tchid")]
+
+#Data we will be working with:
+cat("Formatted Data")
+head(data)
+
+
+
+#Descriptive Analysis:
+library(tidyverse)
+data2 = data %>%
+          group_by(g1tchid) %>%
+          summarise(mean_score=mean(g1tmathss), # You can use other summary statistics
+                    g1schid=unique(g1schid), 
+                    g1classtype=unique(g1classtype)) %>%
+          mutate(class_type = as_factor(g1classtype, levels="labels"),
+                 school_id = as_factor(g1schid),
+                 teacher_id = as_factor(g1tchid), 
+                 .keep = "unused")
+
+#Summary Data
+cat("Summary Data")
+head(data2)
+ggplot(data=data2, mapping=aes(x=class_type, y=mean_score)) +
+  geom_boxplot(color = c("red", "blue", "green")) +
+  xlab("Class Type")
+ggplot(data=data2, mapping=aes(x=school_id, y=mean_score)) +
+  geom_boxplot() +
+  xlab("school id")
+tmp = data2 %>% 
+        group_by(school_id) %>%
+        summarise(sch_mean=mean(mean_score)) 
+summary(tmp$sch_mean)
+```
+
+I chose the boxplot and mean as they are generally good measures of center. The mean gives an average value over each group as an observation average, while the boxplots help show spread as well as outliers. The significance of the boxplot is that it tells us how much our mean can be possibly skewed, and therefore affect any future models we put onto the data. 
+
+# Inferential analysis 
+```{r}
+#Anova model
+model1 = aov(mean_score~school_id+class_type, data=data2)
+summary(model1)
+#Tukey test
+TukeyHSD(model1, "class_type")
+```
+
+The two models above show high significance in the class size. This is because the ANOVA model shows p-values much more significant than if we were to run a alpha = 0.05 significance test.
+
+The Tukey's test shows us the idea of which class size is most optimal for math in the first grade. Going on a case-by-case analysis, the most optimal class is the small class size when compared to the other class sizes. This is highlighted because when the small class size is involved, 0 is not in the interval and the p adj value is much more significant than the alpha = 0.05 value generally run in a Tukey's test. The only one not significant is the regular/regular with aide comparison, which also has 0 in the interval. This can only mean that it is the small class size that is causing such a drastic change in the results.
+
+# Sensitivity analysis 
+
+```{r}
+plot(model1)
+```
+Looking at the residual plot, we can find that the model fits the data well, as the points are close to the regression line. We also can assume the model is normally distributed, as seen by the QQ plot. This shows that any determinations we made from the model, like our F and Tukey values from the inferential analysis can be held as valid. 
+
+
+
+# Discussion 
+As mentioned in the background of the project, the State of Tennessee launched Project Challenge from the results of the original study, which was to reduce class sizes in the grades K - 3 in the 16 poorest counties of the state. From our analysis, we have also found the same, in which the small class sizes benefit the grade 1 math test scores the most. In the context of classrooms, we can infer this is because every student has more time to ask questions in a smaller class size, and therefore is set up for better comprehension of the given topics. Further policy making can be seen in the future, especially if the study is repeated in a place like California, where populations are higher. 
+
+
+
+
+# Acknowledgement {-}
+
+Did not discuss project with other people outside class.
+
+# Reference {-}
+
+Boyd-Zaharias, Jayne. “Project STAR  - The Story of the Tennessee Class-Size Study.” American Federation of Teachers, https://www.aft.org/sites/default/files/periodicals/STARSummer99.pdf. 
+
+# Code Appendix
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE}
+
+```
+
+# Session info {-}
+```{r}
+sessionInfo()
+```
+

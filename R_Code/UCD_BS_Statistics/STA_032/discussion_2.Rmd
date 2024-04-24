@@ -1,0 +1,91 @@
+---
+title: "Discussion 2 - Ishita Dutta"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problem 1
+I. Enter the following code into R to load the Lynx Dataset:
+```{r}
+library(datasets)
+X = as.numeric(lynx)
+#?lynx
+```
+
+(a) Provide a brief description of the dataset.
+_Solution:_
+Annual numbers of lynx trappings for 1821–1934 in Canada. Taken from Brockwell & Davis (1991), this appears to be the series considered by Campbell & Walker (1977).
+
+(b) How many values are in the data?
+_Solution:_
+There are `r length(X)` values in the lynx dataset.
+
+
+## Problem 2
+II. Perform the following:
+  (a) Find the average of X.
+      _Solution:_
+      The average is:`r mean(X)`.
+  (b) Find the minimum and maximum of X.
+      _Solution:_
+      The minumum is:`r min(X)`.
+      The maximum is:`r max(X)`.
+  (c) Subset the data to get all values that are less than the average. Call this Y1.
+  (d) Subset the data to get all values that are more than the average. Call this Y2.
+  ```{r}
+  Y1 = X[X < mean(X)]
+  Y2 = X[X > mean(X)]
+  ```
+  (e) Find the 5th, 23rd, 27th, and 88th percentiles of Y1.
+      _Solution: _
+      The 5th percentile is: `r quantile(Y1, 5/100)`
+      The 8th percentile is: `r quantile(Y1, 8/100)`
+      The 23rd percentile is: `r quantile(Y1, 23/100)`
+      The 27th percentile is: `r quantile(Y1, 27/100)`
+      The 88th percentile is: `r quantile(Y1, 88/100)`
+      
+      
+  (f) Find the average of the deviations of Y2 from its mean.
+      _Solution: _
+      The standard deviation(average of deviations from mean) is: `r sd(Y2)`
+      
+## Problem 3
+III. Review histograms and boxplots to do the following:
+  (a) Create a histogram for X making sure to label the plot and appropriate axes.
+```{r}
+library(MASS)
+truehist(X, nbins = 10, xlab = "Lynx", ylab = "Frequency", prob = FALSE)
+title("Histogram for Lynx")
+```
+
+  (b) What is the purpose of a histogram? Describe the histogram from part (a).
+      _Solution: _
+      Illustrate the dataset, showing what the shape of the data is.
+      In the case of the histogram from part(a) is skewed right.
+      
+  (c) Create a horizontal boxplot for X making sure to label the plot and appropriate
+  axes.
+  
+  If you give boxplot a vector of TRUE‘s and FALSE‘s, it treats them as a grouping
+  variable. Then you can use the command
+  
+  `boxplot(X ~ Group)`
+  
+```{r}
+boxplot(X, horizontal = TRUE, xlab = "numbers", ylab = "Lynx")
+title("Boxplot of Lynx", sub = "True: bigger than mean, False: smaller than mean")
+
+```  
+  
+  
+  (d) Create aGroupvector that has TRUE if the corresponding value of X is less than 
+  the median, and FALSE otherwise, and plot the two boxplots.
+```{r}
+boxplot(X ~ X < median(X), horizontal = TRUE, xlab = "Numbers", ylab = "Lynx")
+title("Boxplot of Lynx", sub = "True: bigger than median, False: smaller than median")
+
+```  
+  

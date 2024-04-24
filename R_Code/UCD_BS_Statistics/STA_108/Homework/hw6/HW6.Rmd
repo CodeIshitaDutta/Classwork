@@ -1,0 +1,127 @@
+---
+title: "HW6"
+author: "Ishita Dutta"
+date: "5/21/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+6.6, 7.1, 7.3, 7.6, 7.11
+
+# 6.6
+## 6.6a)
+Ho --> E(Y) = B0 + B1X1 + B2X2
+Ha --> E(Y) != B0 + B1X1 + B2X2
+Decision --> If p-value is less than alpha, conclude Ho
+```{r}
+brands = read.table("brand+preference.txt")
+Y = brands[,1]
+X1 = brands[,2]
+X2 = brands[,3]
+fit = lm(Y~X1+X2)
+anova(fit)
+```
+Conclusion --> p-value of B2 = 2.01e^(-5) < 0.01 = alpha, and B1 = 0 < 0.01 = alpha so fail to reject null hypothesis
+
+## 6.6b)
+p-value of B1 --> 0, while B2 --> 2.01e^(-5)
+
+## 6.6c)
+```{r}
+mse = summary(fit)$sigma^2
+b0 = fit$coefficients[1]
+b1 = fit$coefficients[2]
+b2 = fit$coefficients[3]
+se.yhat_x1 = sqrt(mse/sum((X1 - mean(X1))^2))
+se.yhat_x2 = sqrt(mse/sum((X2 - mean(X2))^2))
+B <-1- qt(.99/(2 * 2), length(X1) - 3)
+bh.lowerx1 <- b1 - B * se.yhat_x1
+bh.upperx1 <- b1 + B * se.yhat_x1
+bh.lowerx2 <- b2 - B * se.yhat_x2
+bh.upperx2 <- b2 + B * se.yhat_x2
+
+cat("X1 Interval: [", bh.lowerx1,",",bh.upperx1,"]\n")
+cat("X2 Interval: [", bh.lowerx2,",",bh.upperx2,"]\n")
+
+```
+
+
+# 7.1
+```{r}
+ansmat = matrix(c(1,1,2,3),ncol=1)
+colnames(ansmat) <- c("Degrees of Freedom")
+rownames(ansmat) <- c("SSR(X1|X2)","SSR(X2|X1, X3)","SSR(X1, X2|X3, X4)", "SSR(X1, X2, X3|X4, X5)")
+ansmat = as.table(ansmat)
+ansmat
+```
+
+
+# 7.3
+## 7.3a)
+
+```{r}
+fit = lm(Y~X1+X2)
+SSTO = sum(anova(fit)[,2])
+SSRX1 =anova(fit)[1,2]
+SSRX2.X1 =anova(fit)[2,2]
+anova(fit)
+```
+
+
+## 7.3b)
+Ho --> B2 = 0
+Ha --> B2 != 0
+Decision --> If p-value is less than alpha, conclude Ha
+```{r}
+MSE = anova(fit)[3,3]
+Fstar = ((SSRX2.X1)/1)/MSE
+qf(.99,1,13)
+Pval = pf(Fstar,1,13,lower.tail=F)
+```
+Conclusion --> reject Ho, B2 != 0.
+
+
+# 7.6
+Ho --> B2 = B3 = 0
+Ha --> B2 != 0 or B1 != 0 or B3 != 0
+Decision --> If p-value is less than alpha, conclude Ha
+```{r}
+patients = read.table("patient+satisfaction.txt")
+Y1 = patients[,1]
+X11 = patients[,2]
+X12 = patients[,3]
+X13 = patients[,4]
+n=length(Y1)
+ModelX11 = lm(Y1~X11)
+FModel =lm(Y1~X11+X12+X13)
+SSE.X11 = anova(ModelX11)[2,2]
+SSE.X11X12X13 = anova(FModel)[4,2]
+SSR.X12X13.X11 = SSE.X11- SSE.X11X12X13
+MSE = anova(FModel)[4,3]
+Fstar = (SSR.X12X13.X11/2)/MSE
+Fstar
+qf(.975,2,n-4)
+Pval = pf(Fstar,2,n-4,lower.tail=F)
+Pval
+```
+
+F-val--> 4.03271
+F* = 4.1768 
+Conclusion --> reject Ho
+p-val --> 0.02216
+
+# 7.11
+## 7.11a)
+R2Y1 = this is the amount of explained variation in Y when X1 is introduced to the model.
+R2Y2 = this is the amount of explained variation in Y when X2 is introduced to the model.
+R212 = this is the amount of variation in X1 explained by X2.
+R2Y1|2 = this is the amount of additional explained variation in Y when X1 is introduced to the model, given that X2 is already in the model.
+R2Y2|1 =  this is the amount of additional explained variation in Y when X2 is introduced to the model, given that X1 is already in the model.
+R2 = The is the amount of explained variance in Y when X1 and X2 are included in the model.
+
+## 7.11b)
+No, they are not.
+

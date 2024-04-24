@@ -1,0 +1,209 @@
+---
+title: "STA 141A: Assignment 1"
+author: "Ishita Dutta 918193342"
+output: html_document
+---
+***
+
+**Instructions** 
+You may adapt the code in the course materials or any sources (e.g., the Internet, classmates, friends). In fact, you can craft solutions for almost all questions from the course materials with minor modifications. However, you need to write up your own solutions and acknowledge all sources that you have cited in the Acknowledgement section. 
+
+Failing to acknowledge any non-original efforts will be counted as plagiarism. This incidence will be reported to the Student Judicial Affairs. 
+
+
+***
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+(1) Explain data science in your own words. Imagine that your audience are your family members, friends, or anyone without any knowledge in related fields. References that might help craft an answer. More could be found by simply searching for "data science" on the Internet. 
+    - [ASA Statement on the Role of Statistics in Data Science](https://magazine.amstat.org/blog/2015/10/01/asa-statement-on-the-role-of-statistics-in-data-science/)
+    - [Mission of Department of Statistics, UC Davis. ](https://statistics.ucdavis.edu/mission)
+    - [Statement by the UCD DataLab](https://datalab.ucdavis.edu/about/)
+    - [Data science on Wikipedia](https://en.wikipedia.org/wiki/Data_science) 
+
+_Answer:_ I believe data science is an interdisciplinary field. It involves the scientific process, presentation and communication, programming, and works all over various data points which can all be expressed by various numerical points or equations. 
+
+To elaborate, data science begins with the scientific process, where a data scientist finds a question they want to answer. They then create a hypothesis on what the answer might be before either conducting an experiment to get data, or in most cases using a sample of preexisting data. They then must use programming tools to play around with this data and make it in a format usable to answer the question. Here, they combine programming skills over a larger dataset with statistical analysis and inference to make a decision about the accuracy of the hypothesis formed before gathering the data. In the end, the data scientist finds a decision about what to do with their newlyfound information, converts everything they learned into a format people with no expertise can understand, and presents their findings to their audience. 
+
+Describing it like this would seem like data science is more like traditional research, but more real time in an applicable sense than what can be considered the stereotypical thought of traditional research. 
+
+I find this image portrays this concept well:
+
+```{r setup}
+knitr::include_graphics("http://i.imgur.com/aoz1BJy.jpg")
+```
+Source: Google Images: "Data Science is a Combination of:"
+
+***
+
+(2)  Please review the common tasks of data science in Chapter 1 of the course notes and identify your strengths in data science. In particular,
+  (i) describe the top two strengths (skills/characteristics/knowledge/...) of yours that apply to data science;
+  (ii) briefly review how you developed these strengths;  
+  (iii) explain how you plan to contribute to the final project with these strengths. 
+_Answer:_
+i) The top two strengths I currently have that can apply to data science is asking questions and analyzing data.
+ii) I developed ways to ask questions by looking at the variables of various data sets and asking questions combined with prior knowledge on the topic. For example, when looking at data containing variables on temperature and various climate disasters over time, I would want to correlate various temperature anomalies with various climate disasters, like extreme heat to fire, or rain in the summer to a thunderstorm.
+Analysis came from taking many statistics courses here at Davis, as well as subconsciously analyzing graphs on reports I read for projects in other subjects or saw on the news. 
+iii) With my skills, I can help propose various questions we can look at for the final project and help pick a topic, then help analyze the data and state an appropriate decision based on the conclusion from the statistical tests I would run to analyze this data. 
+
+***
+
+(3) Please review the common tasks of data science in Chapter 1 of the course notes and identify the task that you are least confident about. In particular, please explain 
+  (i) what this task means with an example; 
+  (ii) why you feel least confident about this task; 
+  (iii) how you plan to improve your confidence. 
+
+_Answer:_
+i) My weakest skill is cleaning up the data before analyzing it. In depth, I have trouble sometimes in getting the data off of the internet and subsetting it properly before running the analytical tests that would bring me to my decision. 
+ii) I feel least confident about this task because I have not had as much practice in getting data off of the internet and subsetting it. Most of the data I have worked with has either been structured, or data I have collected myself in a structured format. 
+iii) I plan to improve my confidence in this aspect by taking more unstructured data, like agricultural data or marketing data and structuring it out before working on my analysis. 
+
+*** 
+
+
+(4) Consider  `81`,`170`,`1923`,`3825`. (i) Check if they are divisible by `3` and `9`. (ii) Use integer division to calculate the sum of the digits of the numbers (e.g, the sum of the digits of `234` is `2+3+4=9`). (iii) Check whether these sums are divisible by `3` and `9`. (iv) State your observations from (i) and (iii) and verify your hypothesis on more numbers, if any. 
+
+_Answer:_
+```{r}
+cat("i)\n")
+x = c(81, 170, 1923, 3825)
+x %% 3
+cat("Only 170 is not divisible by 3.\n")
+x %% 9
+cat("Both 170 and 1923 are not divisible by 9.\n")
+cat("ii)\n")
+y = 81%%10 + (81%%100 - 81%%10)/10
+z = 170%%10 + (170%%100 - 170%%10)/10 + (170%%1000 - 170%%100)/100
+w = 1923%%10 + (1923%%100 - 1923%%10)/10 + (1923%%1000 - 1923%%100)/100 + (1923%%10000 - 1923%%1000)/1000
+m = 3825%%10 + (3825%%100 - 3825%%10)/10 + (3825%%1000 - 3825%%100)/100 + (3825%%10000 - 3825%%1000)/1000
+c(y,z,w,m)
+cat("iii)\n")
+n = c(y, z, w, m)
+n %% 3
+cat("The result is the same, only 170 is not divisible by 3.\n")
+n %% 9
+cat("The result is the same, both 170 and 1923 are not divisible by 9.\n")
+cat("iv)\n")
+cat("When the sum of the digits is divisible by 3, the number itself is also divisible by 3. The same applies for 9. For example, take the numbers 1566, 271 and 174:\n")
+k = c(1566, 271, 174)
+k %% 3
+cat("As expected, both 1566 and 174 are divisible by 3 whereas 271 is not.\n")
+k %% 9
+cat("By the same convention, only 1566 is divisible by 9.\n")
+```
+
+
+***
+
+(5) Read the help file for the `prod()` function. 
+  
+  (i) Define `a <- c(2,4,6)`, `b <- c(1,3,5)`,  `c <- c(3,5,7)`,  use `a`,`b`,`c` and `prod()` to calculate 
+$$
+2\cdot \left(\frac{2}{1}\cdot \frac{2}{3}\right) \left(\frac{4}{3}\cdot \frac{4}{5}\right)\left(\frac{6}{5}\cdot \frac{6}{7}\right).
+$$
+_Answer:_
+```{r}
+a = c(2, 4, 6)
+b = c(1, 3, 5)
+c = c(3, 5, 7)
+my_prod <- function(m, a, b, c) {
+  j = c(1:m)
+  g = 2
+  for(val in j) {
+    g = prod(g, prod(a[val]/b[val], a[val]/c[val]))
+  }
+  return(g)
+}
+my_prod(3, a, b, c)
+
+```
+
+  (ii) Calculate 
+$$
+2\cdot \left(\frac{2}{1}\cdot \frac{2}{3}\right) \left(\frac{4}{3}\cdot \frac{4}{5}\right)\cdots
+\left(\frac{1000}{999}\cdot \frac{1000}{1001}\right)
+
+$$
+_Answer:_
+```{r}
+my_prod(500,c(2:1000, step = 2),c(1:999, step = 2),c(3:1001, step = 2))
+```
+
+*** 
+
+(6) Write a function to calculate the following quanity for any given input $n$. Report the values (up to 6 [significant figures](https://en.wikipedia.org/wiki/Significant_figures) ) for $n=17, 91, 216$. 
+
+$$
+2\cdot \left(\frac{2}{1}\cdot \frac{2}{3}\right) \left(\frac{4}{3}\cdot \frac{4}{5}\right)\cdots
+\left(\frac{n-1}{n-2}\cdot \frac{n-1}{n}\right)
+$$
+_Answer:_
+This will be the my_prod function I wrote to solve #5, just parameters will be changed to what values n will be.
+```{r}
+n = c(17, 91, 216)
+for(val in n) {
+  cat("n = ", val, ": ", my_prod((val-1)/2,c(2:(val-1), step = 2),c(1:(val-2), step = 2),c(3:val, step = 2)), "\n")
+}
+```
+
+***
+
+(7) Apply your function in (6) on $n=5,\ldots, 500$. Draw a scatterplot between the outputs of your function versus the values of $n$s. State your findings, if any.
+
+_Answer:_
+```{r}
+n = c(5:500)
+q = vector()
+for(val in n) {
+  m = my_prod((val-1)/2,c(2:(val-1), step = 2),c(1:(val-2), step = 2),c(3:val, step = 2))
+  q = c(q, m)
+}
+plot(n, q, xlab = "n = 5...500", ylab = "f(n = 5...500)")
+```
+
+***
+ 
+
+(8) For the rest of the problems, we will examine the `cars` dataset included in `R`. We can load `cars` with `data(cars)` if it is not in the workspace yet. 
+ Ask `R` to report the first six observations in `cars`, and count how many observations and variables are in the dataset. 
+ _Answer:_
+```{r}
+cars[1:6,]
+cat("Number of variables in the cars dataset: ", nrow(cars), "\n")
+cat("Number of observations in the cars dataset: ", ncol(cars))
+```
+
+*** 
+
+(9) What does each column represent, and what is the meaning of their values? 
+_Answer:_
+The columns are quantitative variables measuring speed(mph) and distance to stop(ft) for various cars.
+
+***
+
+(10) What does each row represent? 
+_Answer:_
+Each row represents a different car.
+
+***
+
+(11) Create a scatterplot of  variables in `cars`. Explain your observations on the scatter plot. 
+_Answer:_
+```{r}
+plot(cars[,1],cars[,2], xlab = "Speed(mph)", ylab = "Distance(ft)")
+```
+Observation: Cars with higher speeds take more distance to stop, although the correlation coefficient should not reflect a number too close to 1 as the points seem to deviate a lot from any proposed regression line.
+
+***
+
+## Acknowledgement {-}
+
+## Session information {-}
+```{r}
+sessionInfo()
+```
+

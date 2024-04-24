@@ -1,0 +1,144 @@
+---
+title: "sta_project_1"
+author: "Ishita Dutta, Devika Sunil Kumar, Fernanda Serna Godoy"
+date: "4/16/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(
+ echo = FALSE,
+ error = FALSE,
+ message = FALSE,
+ warning = FALSE
+)
+```
+
+```{r}
+library(ggplot2)
+library(viridis)
+
+```
+
+# Problem 1 - Fitting Regression Models
+```{r}
+data1 = read.table("CDI.txt")
+colnames(data1)=c("ID", "County", "State", "Area", "Population", "18_to_34", "65+", "Active_Physicians", "Beds", "Serious_Crimes", "High_School_Grad", "Bachelors_Degree", "Under_Poverty_Line", " Unemployed", "Per_Capita_Income", "Total_Income", "Region")
+X1 = data1[,"Population"] #Population in Hundred Thousands
+X1 = X1
+X2 = data1[,"Beds"] #Number of Hospital Beds in Thousands
+X2 = X2 
+X3 = data1[,"Total_Income"] #Personal Income in Ten Thousands
+X3 = X3
+Y = data1[,"Active_Physicians"]
+n = length(X1)
+
+```
+
+## 1.43 a)
+```{r}
+
+cat("Population(In Hundred Thousands): \n")
+b1hat1 = t(X1-mean(X1))%*%(Y-mean(Y))/sum((X1-mean(X1))^2)
+b0hat1 = mean(Y) - b1hat1*mean(X1)
+cat("Y = ", b0hat1, " + ", b1hat1, "x\n")
+
+cat("Number of Hospital Beds(In Thousands): \n")
+b1hat2 = t(X2-mean(X2))%*%(Y-mean(Y))/sum((X2-mean(X2))^2)
+b0hat2 = mean(Y) - b1hat2*mean(X2)
+cat("Y = ", b0hat2, " + ", b1hat2, "x\n")
+
+cat("Personal Income(In Ten Thousands): \n")
+b1hat3 = t(X3-mean(X3))%*%(Y-mean(Y))/sum((X3-mean(X3))^2)
+b0hat3 = mean(Y) - b1hat3*mean(X3)
+cat("Y = ", b0hat3, " + ", b1hat3, "x\n")
+```
+
+
+
+## 1.43 b)
+```{r}
+fit.y1 = b0hat1[1] + b1hat1[1]*X1
+ggplot(CDI, aes(CDI[,5], CDI[,8])) +
+  geom_point() +
+  geom_abline(intercept = b0hat1, slope = b1hat1, color = '#E41A1C')
+plot(X1, Y, xlab="Population (In Hundred Thousands)", ylab="Number of Physicians" , main = "Population vs Number of Physicians")
+abline(lm(Y ~ X1))
+
+plot(X2, Y, xlab="Number of Hospital Beds (In Thousands)", ylab="Number of Physicians" , main = "Number of Hospital Beds vs Number of Physicians")
+abline(lm(Y ~ X2))
+
+plot(X3, Y, xlab="Personal Income(In Ten Thousands)", ylab="Number of Physicians" , main = "Personal Income vs Number of Physicians")
+abline(lm(Y ~ X3))
+``` 
+
+## 1.43 c)
+calculate MSE
+```{r}
+fit.y1 = b0hat1[1] + b1hat1[1]*X1
+mse1 = 1/(n-2)*sum((Y - fit.y1)^2)
+cat("MSE for Population Measured in Hundred Thousands: ", mse1, "\n")
+
+fit.y2 = b0hat2[1] + b1hat2[1]*X1
+mse2 = 1/(n-2)*sum((Y - fit.y2)^2)
+cat("MSE for Number of Hospital Beds Measured in Thousands: ", mse2, "\n")
+
+fit.y3 = b0hat3[1] + b1hat3[1]*X1
+mse3 = 1/(n-2)*sum((Y - fit.y3)^2)
+cat("MSE for Personal Income Measured in Ten Thousands: ", mse3, "\n")
+
+```
+
+  The predictor variable that leads to the smallest variability around the fitted regression line is the population (in hundred thousands) as it has the smallest MSE value.
+  
+
+## 1.44 a)
+```{r}
+# using columns 15(per capita income - y) and 12(% bachelors degrees - x)
+# geographic region is column 17.
+
+#cc <- crime.lm$coefficients ____ figure this out!!!
+region_1 = data1[data1$"Region" == 1,]
+fit1 = lm("Per_Capita_Income"~"Bachelors_Degree", data=region_1)
+
+
+
+cat("Y = 10787.8 + 368.8x\n")
+
+cat("Y = ", b0hat1, " + ", b1hat1, "x\n")
+
+cat("Y = ", b0hat1, " + ", b1hat1, "x\n")
+
+cat("Y = ", b0hat1, " + ", b1hat1, "x\n")
+```
+
+# Problem 2 - xxxxxx
+```{r}
+summary(fit.y1)$r.squared
+summary(fit.y2)$r.squared
+summary(fit.y3)$r.squared
+```
+
+
+
+
+# Part 4 - XXXXXX
+```{r}
+y_hat = fit$fitted.values 
+SSTO = sum((Y-mean(Y))^2)
+SSE = sum((Y-y_hat)^2)
+SSR = sum((y_hat-mean(Y))^2)
+Rsquare = SSR/SSTO
+summary(fit)$r.squared
+y1_hat = fit.y1$residuals
+y1_hat
+#plot(x=cars$speed, y=residuals, xlab=’predictor variable’, ylab=’residuals’)
+#abline(h=0, col=’red’)
+```
+
+
+
+
+# Appendix
+
+```{r, echo=TRUE, eval=FALSE, ref.label=knitr::all_labels()}

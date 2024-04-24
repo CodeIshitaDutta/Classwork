@@ -1,0 +1,112 @@
+---
+title: "Exam Notes"
+author: "Ishita Dutta"
+date: "5/3/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# Getting the data
+#CDI = read.table("CDI.txt")
+X1 = CDI[,5] #Population in Hundred Thousands
+X1 = c(1, 0, 2, 0, 3, 1, 0, 1, 2, 0)
+Y = c(16, 9, 17, 12, 22, 13, 8, 15, 19, 11)
+n = length(X1)
+
+# hw 3
+fit1 = lm(Y~X1)
+y_hat1 = fit1$fitted.values
+SSTO1 = sum((Y1-mean(Y1))^2)
+SSE1 = sum((Y1-y_hat1)^2)
+SSR1 = sum((y_hat1-mean(Y1))^2)
+MSR1 = SSR1/(1)
+MSE1 = SSE1/(n1-2)
+Fstatistic1 = MSR1/MSE1
+
+Fstatistic1
+r1 = cor(X1,Y)
+t1 = r1*sqrt(n1-2)/sqrt(1-r1^2)
+t1
+F1 = t1 ^ 2
+F1
+
+
+pvalue1 = pf(Fstatistic1, 1, n1-2, lower.tail = F)
+
+b1hat1 = t(X1-mean(X1))%*%(Y-mean(Y))/sum((X1-mean(X1))^2)
+b0hat1 = mean(Y) - b1hat1*mean(X1)
+plot(X1, Y, xlab="Population", ylab="Number of Active Physicians" , main = "Population vs\nNumber of Physicians")
+abline(lm(Y ~ X1))
+fit.y1 = b0hat1[1] + b1hat1[1]*X1
+mse1 = 1/(n-2)*sum((Y - fit.y1)^2)
+
+R1b1hat1 = t(RX1-mean(RX1))%*%(RY1-mean(RY1))/sum((RX1-mean(RX1))^2)
+R1b0hat1 = mean(RY1) - R1b1hat1*mean(RX1)
+R1fit = R1b0hat1[1] + R1b1hat1[1]*RX1
+R1mse = 1/(R1n-2)*sum((RY1 - R1fit)^2)
+
+fit1 = lm(Y~X1)
+y_hat1 = fit1$fitted.values
+SSR = sum((y_hat1 - mean(Y))^2)
+SSTO = sum (((Y - mean(Y)))^2)
+
+library (knitr)
+confint(fitr4, parm = "RX4",  level = 0.90)
+kable(anova(fitr1))
+
+
+R2a = fit1$residuals
+plot(X1, y = R2a, xlab='Population', ylab='residuals')
+abline(h=0, col='red')
+qqnorm(R2a)
+qqline(R2a, col='green')
+
+boxplot(X1, horizontal = TRUE, xlab = "Scores")
+title("Boxplot of ACT Scores")
+
+numVals = length(Y1)
+fit1 = lm(Y~X1)
+bohat1 = fit1$coefficients[[1]]
+b1hat1 = fit1$coefficients[[2]]
+Yi_hat1 = bohat1 + b1hat1 * (X1)
+Y1_1 = Y1-Yi_hat1
+fit1 = lm(Y1_1~X1)
+plot(X1,Y1_1,
+ xlim = c(15,35), ylim=c(-3,2),
+ main = " Scores vs Residuals(Y-Yihat)",
+ xlab = "Score",
+ ylab = "GPA Residual",
+ cex.main = .85)
+abline(fit1, col = "green")
+
+e1 = fit1$residuals
+fit1_1 = lm(e1~Yi_hat1)
+plot(Yi_hat1,e1,
+ main = " e1 vs Y;",
+ xlab = "Y",
+ ylab = "e1",
+ cex.main = .85)
+abline(fit1_1, col = "green")
+
+res = qqnorm(e1)
+qqline(e1, col='green')
+r=cor(res$x, res$y)
+
+
+group1 <- GPAdata$x < 26
+group2 <- !group1
+d1 <- abs(e1[group1] - median(e1[group1]))
+d2 <- abs(e1[group2] - median(e1[group2]))
+n <- length(e1)
+n1 <- length(d1)
+n2 <- length(d2)
+s <- sqrt((sum((d1-mean(d1))^2)+sum((d2-mean(d2))^2))/(n - 2))
+tstar <- (mean(d1)-mean(d2))/s/sqrt(1/n1+1/n2)
+tcrit <- qt(0.995, df = n-2)
+abs(tstar) <= tcrit
+
+```

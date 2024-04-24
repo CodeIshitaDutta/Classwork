@@ -1,0 +1,146 @@
+---
+title: "Roadmap"
+author: "Ishita Dutta"
+date: "02/18/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+#Roadmap
+
+##Current Progress:
+
+Question selected, looking over given data set to gain useful variables, finding dataset on daily vaccination doses given.
+
+##Question:
+
+How does the administration of vaccines affect new COVID-19 Case counts over time?
+
+##Reasoning for question:
+
+We can show through this question that the vaccine is a really affecive preventive measure against the spread of COVID-19, also prompting people who are against getting the vaccine to go get the vaccine. 
+
+##Given Data and Progress:
+
+```{r include = FALSE, echo=FALSE}
+#libraries:
+library(tidyverse)
+library(ggplot2)
+```
+
+The given data had these variables:
+```{r echo=FALSE,include=FALSE}
+#First working with the raw data:
+raw_dat <- read_csv("https://covid19.who.int/WHO-COVID-19-global-data.csv")
+colnames(raw_dat)
+avai_id = which(!is.na(raw_dat$Country_code))
+c1 = raw_dat[avai_id,c("Date_reported", "New_cases", "New_deaths", "Country" , "WHO_region")]
+
+```
+
+
+
+```{r}
+covid1 = subset(c1,WHO_region == "SEARO")
+covid2 = subset(c1,WHO_region == "WPRO")
+covid = rbind(covid1, covid2)
+```
+
+Out of these, Cumulative cases and deaths are not as important to my question as the new cases and deaths. These two variables will not be counted in my data: 
+```{r}
+colnames(covid)
+```
+
+Now, to work with the cleaner data more suited to my question. First, checking what the country data looks on its own in this graph comparing cases reported in Turkey and Indonesia:
+
+```{r echo = FALSE}
+covidturk = subset(covid, Country == "Japan")
+covidindon = subset(covid,  Country == "Viet Nam")
+covidturkindon = rbind(covidturk, covidindon)
+ggplot(data=covidturkindon, mapping=aes(x=Date_reported, y=New_cases, color = Country)) +
+  geom_point()
+  #theme(legend.position = "none")
+```
+This was just to check that the data has been subsetted correctly and similar methods can be used to get the data for other countries. 
+
+On this note, I also checked what other countries there are by subsetting on a random given date, October 12 2021:
+```{r}
+#include = FALSE, echo = FALSE
+covid_oct122021 = subset(covid, Date_reported == "2021-10-12")
+covid_oct122021$Country
+```
+This gives me a list of countries so that I can easily sort by countries that I want to compare for a sample.
+
+##Supplemental Data
+
+This data is like the given data but only measures the number vaccines administered per day. We can join this into the WHO data for one combined dataset but I need to check this before combining to make sure there is a proper overlap to combine. 
+```{r echo = FALSE}
+vaccine = read.csv("daily-covid-vaccination-doses-per-capita.csv")
+vaccine_countries = subset(vaccine, Entity == "Tonga")
+
+vaccine_countries
+```
+
+##Timeline:
+
+This is all the work I have done so far, so below is a timeline for what I will do:
+```{r echo = FALSE}
+duedates = c("Feb 21", "Feb 24", "Mar 10", "Mar 13", "Mar 14")
+ch1 = "clean all data and put all tables together for analysis"
+ch2 = "first iteration of analysis process complete"
+ch3 = "Analysis iteration process complete"
+ch4 = "Formatting and report writing complete"
+ch5 = "Final report submission MANY HOURS before the deadline :)"
+checks = c(ch1, ch2, ch3, ch4, ch5)
+data.frame(duedates, checks)
+```
+
+***
+##Abstract
+
+-
+
+##Introduction
+
+-
+
+##Background
+
+-
+
+##Descriptive Analysis
+
+-
+
+##Inferential Analysis
+
+-
+
+##Sensitivity Analysis
+
+-
+
+##Discussion
+
+-
+
+##Appendix
+-
+###Acknowledgements
+
+-
+
+###Reference
+
+-
+
+###Code
+
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE}
+```
+
+###Session Info
+
+-

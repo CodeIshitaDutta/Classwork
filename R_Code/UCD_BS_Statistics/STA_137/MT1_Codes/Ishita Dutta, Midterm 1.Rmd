@@ -1,0 +1,75 @@
+---
+title: "Midterm 1"
+author: "Ishita Dutta"
+date: "1/31/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#1
+```{r}
+#uploading the givens
+xbar = 59.97
+r0 = 19.863
+r1 = -14.096
+r2 = 7.622
+```
+
+##A
+Since the p(j) autocorrelation = r(j)/r(0), we will use this to get p(j), j = 0,1,2
+```{r}
+p0 = r0/r0
+p0
+p1 = r1/r0
+p1
+p2 = r2/r0
+p2
+```
+
+##B
+Ho --> p-value >= 0.05 = alpha
+Ha --> p-value < 0.05 = alpha
+Decision rule as stated in the hypothesis by p-value listed from the Box-Ljung Test using R.
+```{r}
+Box.test(c(p0,p1,p2), lag = 3, type = "Ljung-Box")
+```
+So, I was not able to figure this part out but I know this should be the line of code we need to use, just the vector is incorrect... In any case, I hope I can get some points for correct setup, and I will take a guess that we reject the null hypothesis and say that the series is nonlinear. Hopefully this works :)
+
+#2
+##A
+True, this is a stationary series, as adding a constant should only change the mean.This means that the series would still be stationary as nothing that can generate a pattern is created.
+
+##B
+False, as adding 2t would be a variable that can generate a pattern, therefore the series would not be stationary
+
+##C
+True, as we are only adding and multiplying constants, the values only change by a constant but the idea that there is no pattern(ie the series is still stationary)
+
+##D
+True, as you are trying to multiply a variable to a stationary series and add a constant.... this means that the variable multiplied has no effect because the series it is multiplied into is stationary, so there should not be any pattern formed. The same as answer 2A applies for the constant added.
+
+#3
+```{r}
+n = 40
+sse.m1 = 25164
+sse.m2 = 22368
+sse.m3 = 22304
+p.m1 = 2
+p.m2 = 3
+p.m3 = 4
+var.m1 = sse.m1/n
+var.m2 = sse.m2/n
+var.m3 = sse.m3/n
+AIC.m1 = (n * log(var.m1)) + (2 * p.m1)
+AIC.m2 = (n * log(var.m2)) + (2 * p.m2)
+AIC.m3 = (n * log(var.m3)) + (2 * p.m3)
+c(AIC.m1,AIC.m2,AIC.m3)
+```
+Smallest AIC value is from model 2 (result = 259.0603). This model was the best 2 X-Variable model.
+
+
+
+

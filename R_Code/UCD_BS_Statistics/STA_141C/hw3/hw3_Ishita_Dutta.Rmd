@@ -1,0 +1,72 @@
+---
+title: "STA 141C HW 1"
+author: "Ishita Dutta"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(MASS)
+library(mvtnorm)
+library(datasets)
+```
+
+# 1
+```{r}
+penguins
+iris
+warpbreaks
+chickwts
+infert
+
+
+
+
+
+
+```
+
+
+
+
+```{r}
+A = read.table('./ucd/A.txt', header = FALSE, sep = ",")
+
+A_t = t(A)
+
+U = read.table('./ucd/U.txt', header = FALSE, sep = ",")
+```
+
+
+```{r}
+pages <- length(U[,1])
+edges <- sum(A_t)
+nodes <- sum(rowSums(A_t) == 0)
+max_in_degree <- max(colSums(A_t))
+max_out_degree <- max(rowSums(A_t))
+pages
+edges
+nodes
+max_in_degree
+max_out_degree
+```
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

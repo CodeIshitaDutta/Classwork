@@ -1,0 +1,89 @@
+---
+title: "HW 4 Ishita Dutta"
+author: "Ishita Dutta"
+date: "10/28/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+cat("1a.")
+helicopter = read.table("helicopter.txt")
+#separate X and Y
+X = helicopter[,2]
+Y = helicopter[,1]
+
+# Subset based on shift
+Y1 <- subset(helicopter, helicopter[,2] == 1)
+Y2 <- subset(helicopter, helicopter[,2] == 2)
+Y3 <- subset(helicopter, helicopter[,2] == 3)
+Y4 <- subset(helicopter, helicopter[,2] == 4)
+
+#Find fitted vals
+Ybar1. = mean(Y1[,1])
+Ybar2. = mean(Y2[,1])
+Ybar3. = mean(Y3[,1])
+Ybar4. = mean(Y4[,1])
+
+cat("Ybar1. = ", Ybar1.,"\nYbar2. = ", Ybar2., "\nYbar3. = ", Ybar3.,"\nYbar4. = ", Ybar4.)
+
+#Find Residuals
+Yr1 = (Y1[,1] - Ybar1.)
+Yr2 = (Y2[,1] - Ybar2.)
+Yr3 = (Y3[,1] - Ybar3.)
+Yr4 = (Y4[,1] - Ybar4.)
+
+cat("Residuals:")
+cat("Y1 = ", Yr1)
+cat("Y2 = ", Yr2)
+cat("Y3 = ", Yr3)
+cat("Y4 = ", Yr4)
+
+plot(X, c(Yr1, Yr2, Yr3, Yr4), xlab = "Shift", ylab = "Residuals")
+
+cat("1b. \nThe error variances are not roughly equal, as the residuals for shifts 2 and 3 cover a visibly smaller range than the residuals for shifts 1 and 4.")
+cat("1c. \n ")
+qqnorm(Y1[,1], main = "Y1 Residuals")
+qqnorm(Y2[,1], main = "Y2 Residuals")
+qqnorm(Y3[,1], main = "Y3 Residuals")
+qqnorm(Y4[,1], main = "Y4 Residuals")
+cat("None of the lines seem to be straight on this qqpnorm for the sets. This means that we must take some remedial measure to make the data seem normal to get the best analysis.")
+
+cat("1d. \n")
+#Finding Si^2:
+S1 = sqrt((1/19)*(sum((Y1[,1] - Ybar1.)^2)))
+S2 = sqrt((1/19)*(sum((Y2[,1] - Ybar2.)^2)))
+S3 = sqrt((1/19)*(sum((Y3[,1] - Ybar3.)^2)))
+S4 = sqrt((1/19)*(sum((Y4[,1] - Ybar4.)^2)))
+
+#Finding (Si^2)/Ybari.
+S21Yb1. = (S1^2)/Ybar1.
+S22Yb2. = (S2^2)/Ybar2.
+S23Yb3. = (S3^2)/Ybar3.
+S24Yb4. = (S4^2)/Ybar4.
+
+#Finding Si/Yi
+S1Yb1. = (S1)/Ybar1.
+S2Yb2. = (S2)/Ybar2.
+S3Yb3. = (S3)/Ybar3.
+S4Yb4. = (S4)/Ybar4.
+
+#Finding Si/(Yi^2)
+S1Yb21. = S1/(Ybar1. ^ 2)
+S2Yb22. = S2/(Ybar2. ^ 2)
+S3Yb23. = S3/(Ybar3. ^ 2)
+S4Yb24. = S4/(Ybar4. ^ 2)
+
+tab <- matrix(c(S1^1, S21Yb1., S1Yb1.,S1Yb21.,S2^1, S22Yb2., S2Yb2.,S2Yb22.,S1^3, S23Yb3., S3Yb3.,S3Yb23.,S4^1, S24Yb4., S4Yb4.,S4Yb24.), ncol=4, byrow=TRUE)
+colnames(tab) <- c('S^2','(Si^2)/Ybari.','Si/Yi', 'Si/(Yi^2)')
+rownames(tab) <- c('Y1', 'Y2', 'Y3', 'Y4')
+tab <- as.table(tab)
+tab
+
+
+
+cat("The best values should come from using a square root transformation for this dataset, as it has the smallest difference in the 4 shifts. \n\n Sorry, but this is all I was able to do for this homework assignment in regards to time... I'll manage my time better for next week's assignment...")
+```

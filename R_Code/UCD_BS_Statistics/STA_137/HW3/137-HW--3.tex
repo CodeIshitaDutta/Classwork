@@ -1,0 +1,408 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Homework R Markdown Skeleton},
+  pdfauthor={Samayita Bhattacharjee, January 14},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage[fleqn]{amsmath}
+
+\title{Homework R Markdown Skeleton}
+\author{Samayita Bhattacharjee, January 14}
+\date{}
+
+\begin{document}
+\maketitle
+
+\hypertarget{problem-1}{%
+\subsection{Problem 1}\label{problem-1}}
+
+\includegraphics{137-HW--3_files/figure-latex/unnamed-chunk-1-1.pdf}
+\includegraphics{137-HW--3_files/figure-latex/unnamed-chunk-1-2.pdf}
+
+\includegraphics{137-HW--3_files/figure-latex/unnamed-chunk-2-1.pdf}
+\includegraphics{137-HW--3_files/figure-latex/unnamed-chunk-2-2.pdf}
+
+\hypertarget{problem-2}{%
+\subsection{Problem 2}\label{problem-2}}
+
+\hypertarget{a}{%
+\subsubsection{2(a)}\label{a}}
+
+For MA(1) model:
+
+\[
+X_t=Z_t+\theta Z_{t-1},\ \ \ where \ \ Z_t\mathop{\sim}\limits^{i.i.d}N(0,\sigma^2).
+\]
+
+For autocovariance:
+
+\textbackslash begin\{aligned\}
+\gamma(0)\&=Var(X\_t)=Var(Z\_t+\theta Z\_\{t-1\})=Var(Z\_t)+\theta\textsuperscript{2Var(Z\_\{t-1\})=\sigma}2(1+\theta\textsuperscript{2)=11.48\textbackslash{}
+\textbackslash{}
+\gamma(1)\&=COV(X\_t,X\_\{t-1\})=COV(Z\_t+\theta Z\_\{t-1\},Z\_\{t-1\}+\theta Z\_\{t-2\})=\theta\sigma}2=-5.6\textbackslash{}
+\textbackslash{} \gamma(h)\&=0,~~~where ~~h\geq 2
+
+\textbackslash end\{aligned\}
+
+For autocorrelation:
+
+\begin{aligned}
+\rho(0)&=1\\
+\\
+\rho(1)&=\frac{\gamma(0)}{\gamma{(1)}}=\frac{\theta}{1+\theta^2}\\
+\\
+\rho(h)&=0,\ where \ \ \ h\geq 2
+\end{aligned}
+
+\hypertarget{b}{%
+\subsubsection{2(b)}\label{b}}
+
+\begin{align}
+
+&Var(\overline{X})=\frac{\tau_n^2}{n}, \ \ \ where \\
+\\
+&\tau^2_n=\gamma(0)+2\sum_{h=1}^{n-1}(1-\frac{h}{n})\gamma(h)=\gamma(0)+2(1-\frac{1}{n}\gamma(1))=(1+\theta^2)\sigma^2+2\cdot\frac{n-1}{n}\theta\sigma^2=0.3978947\\
+\\
+&Var(\overline{X})=\frac{\tau_n^2}{n}=0.004188366
+\end{align}
+
+\hypertarget{c}{%
+\subsubsection{2(c)}\label{c}}
+
+When \(\theta=0.8\), we get \(Var(\overline{X})\)=0.2374958.
+
+\hypertarget{d}{%
+\subsubsection{2(d)}\label{d}}
+
+95\% confidence interval for \(\mu=E(X_t)\) is:
+
+\[
+(\overline{X}-1.96\frac{\tau_n}{\sqrt{n}},\overline{X}+1.96\frac{\tau_n}{\sqrt{n}})
+\]
+
+That is, \((37.11824,41.28176)\).
+
+\hypertarget{problem-3}{%
+\subsection{Problem 3}\label{problem-3}}
+
+\hypertarget{a-1}{%
+\subsubsection{3(a)}\label{a-1}}
+
+In the case of AR(1) model, i.e. \[
+X_t-\mu=\phi(X_{t-1}-\mu)+\epsilon_t
+\] For \(\gamma(0)\) and \(\rho(h)\):
+
+\textbackslash begin\{aligned\}
+\&\gamma(0)=Var(X\_t)=(1-\phi\textsuperscript{2)}\{-1\}\sigma\textsuperscript{2=19.44444\textbackslash{}
+\textbackslash{} \&\rho(h)=\phi}h\textbackslash{} \textbackslash{}
+\&\tau\_n\textsuperscript{2\approx\gamma(0){[}1+2\sum\_\{h=1\}\^{}\{\infty\}\rho(h){]}=\sigma}2/(1-\phi)\^{}2=2.160494\textbackslash{}
+\textbackslash{} \&Var(\overline{X_t})=\frac{\tau_n^2}{n}=0.02274204
+\textbackslash end\{aligned\}
+
+\hypertarget{b-1}{%
+\subsubsection{3(b)}\label{b-1}}
+
+When \(\phi=0.8\), we get \(Var(\overline{X})= 1.842105\).
+
+\#\#4
+\includegraphics{137-HW--3_files/figure-latex/unnamed-chunk-3-1.pdf}
+\includegraphics{137-HW--3_files/figure-latex/unnamed-chunk-3-2.pdf}
+\includegraphics{137-HW--3_files/figure-latex/unnamed-chunk-3-3.pdf}
+
+\begin{verbatim}
+##    AR1.aic  AR2.aic  AR3.aic  AR4.aic  AR5.aic  AR6.aic
+## 1 234.5559 235.2847 237.2512 239.1987 240.9296 242.8016
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Call:
+## arima(x = data, order = c(1, 0, 0))
+## 
+## Coefficients:
+##          ar1  intercept
+##       0.7113     5.6856
+## s.e.  0.0807     0.4407
+## 
+## sigma^2 estimated as 1.273:  log likelihood = -114.28,  aic = 234.56
+\end{verbatim}
+
+\begin{verbatim}
+##       ar1 intercept 
+## 0.7112991 5.6855723
+\end{verbatim}
+
+\includegraphics{137-HW--3_files/figure-latex/unnamed-chunk-3-4.pdf}
+\includegraphics{137-HW--3_files/figure-latex/unnamed-chunk-3-5.pdf}
+
+\begin{verbatim}
+## 
+##  Box-Ljung test
+## 
+## data:  AR1$residuals
+## X-squared = 2.4072, df = 10, p-value = 0.9922
+\end{verbatim}
+
+\begin{verbatim}
+##  [1] 3.750000 6.050000 5.208333 3.283333 3.025000 2.925000 5.591667 4.366667
+##  [9] 4.125000 4.300000 6.841667 5.450000 5.541667 6.691667 5.566667 5.641667
+## [17] 5.158333 4.508333 3.791667 3.841667 3.558333 3.491667 4.983333 5.950000
+## [25] 5.600000 4.858333 5.641667 8.475000 7.700000 7.050000 6.066667 5.850000
+## [33] 7.175000 7.616667 9.708333 9.600000 7.508333 7.191667 7.000000 6.175000
+## [41] 5.491667 5.258333 5.616667 6.850000 7.491667 6.908333 6.100000 5.591667
+## [49] 5.408333 4.941667 4.500000 4.216667 3.966667 4.741667 5.783333 5.991667
+## [57] 5.541667 5.083333 4.608333 4.616667 5.800000 9.283333 9.608333 8.933333
+## [65] 8.075000 7.358333 6.158333 5.275000 4.875000 4.358333 3.891667 3.675000
+\end{verbatim}
+
+\begin{verbatim}
+##   ARn1.aic ARn2.aic ARn3.aic ARn4.aic ARn5.aic ARn6.aic
+## 1 213.3339 210.2611 211.9065 213.8531 215.4704 217.1695
+\end{verbatim}
+
+\begin{verbatim}
+##        ar1        ar2  intercept 
+##  0.9934626 -0.2690977  5.6128301
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Please cite as:
+\end{verbatim}
+
+\begin{verbatim}
+##  Hlavac, Marek (2018). stargazer: Well-Formatted Regression and Summary Statistics Tables.
+\end{verbatim}
+
+\begin{verbatim}
+##  R package version 5.2.2. https://CRAN.R-project.org/package=stargazer
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## ==============================================
+##                       Dependent variable:     
+##                   ----------------------------
+##                        data         newdata   
+##                        (1)            (2)     
+## ----------------------------------------------
+## ar1                  0.711***      0.993***   
+##                      (0.081)        (0.116)   
+##                                               
+## ar2                                -0.269**   
+##                                     (0.117)   
+##                                               
+## intercept            5.686***      5.613***   
+##                      (0.441)        (0.412)   
+##                                               
+## ----------------------------------------------
+## Observations            74            72      
+## Log Likelihood       -114.278      -101.131   
+## sigma2                1.273          0.957    
+## Akaike Inf. Crit.    234.556        210.261   
+## ==============================================
+## Note:              *p<0.1; **p<0.05; ***p<0.01
+\end{verbatim}
+
+\begin{verbatim}
+## [1] 4.185842
+\end{verbatim}
+
+\begin{verbatim}
+## [1] 4.75126
+\end{verbatim}
+
+\begin{verbatim}
+## $pred
+## Time Series:
+## Start = 73 
+## End = 73 
+## Frequency = 1 
+## [1] 4.15083
+## 
+## $se
+## Time Series:
+## Start = 73 
+## End = 73 
+## Frequency = 1 
+## [1] 0.9782596
+\end{verbatim}
+
+\begin{verbatim}
+## $pred
+## Time Series:
+## Start = 73 
+## End = 74 
+## Frequency = 1 
+## [1] 4.150830 4.681853
+## 
+## $se
+## Time Series:
+## Start = 73 
+## End = 74 
+## Frequency = 1 
+## [1] 0.9782596 1.3789533
+\end{verbatim}
+
+\hypertarget{code-appendix}{%
+\subsubsection{Code Appendix}\label{code-appendix}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{knitr}\OperatorTok{::}\NormalTok{opts_chunk}\OperatorTok{$}\KeywordTok{set}\NormalTok{(}\DataTypeTok{echo =} \OtherTok{FALSE}\NormalTok{,}\DataTypeTok{warning=}\OtherTok{FALSE}\NormalTok{)}
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\KeywordTok{library}\NormalTok{(ggplot2)}
+\CommentTok{#Problem 1(a)}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+\NormalTok{simMA1}\FloatTok{.1}\NormalTok{a<-}\KeywordTok{arima.sim}\NormalTok{(}\DataTypeTok{n=}\DecValTok{275}\NormalTok{,}\DataTypeTok{model=}\KeywordTok{list}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DataTypeTok{ma=}\FloatTok{0.7}\NormalTok{)),}\DataTypeTok{sd=}\DecValTok{1}\NormalTok{)}
+
+\KeywordTok{plot.ts}\NormalTok{(simMA1}\FloatTok{.1}\NormalTok{a)}
+\KeywordTok{acf}\NormalTok{(simMA1}\FloatTok{.1}\NormalTok{a,}\DataTypeTok{lag.max =} \DecValTok{10}\NormalTok{)}
+\CommentTok{#Problem 1(b)}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+\NormalTok{simMA2}\FloatTok{.1}\NormalTok{b<-}\KeywordTok{arima.sim}\NormalTok{(}\DataTypeTok{n=}\DecValTok{275}\NormalTok{,}\DataTypeTok{model=}\KeywordTok{list}\NormalTok{(}\DataTypeTok{ma=}\KeywordTok{c}\NormalTok{(}\FloatTok{1.1}\NormalTok{,}\FloatTok{0.7}\NormalTok{)),}\DataTypeTok{sd=}\DecValTok{1}\NormalTok{)}
+\KeywordTok{plot.ts}\NormalTok{(simMA2}\FloatTok{.1}\NormalTok{b)}
+\KeywordTok{acf}\NormalTok{(simMA2}\FloatTok{.1}\NormalTok{b,}\DataTypeTok{lag=}\DecValTok{10}\NormalTok{)}
+\KeywordTok{library}\NormalTok{(readxl)}
+\NormalTok{Unemp1948}\FloatTok{.2021}\NormalTok{ <-}\StringTok{ }\KeywordTok{read_excel}\NormalTok{(}\StringTok{"Unemp1948-2021.xls"}\NormalTok{,}\DataTypeTok{skip =} \DecValTok{10}\NormalTok{)}
+\NormalTok{tm <-}\StringTok{ }\DecValTok{1}\OperatorTok{:}\DecValTok{74}
+\NormalTok{plot1 =}\StringTok{ }\KeywordTok{plot.ts}\NormalTok{(Unemp1948}\FloatTok{.2021}\OperatorTok{$}\NormalTok{UNRATE)}
+\KeywordTok{acf}\NormalTok{(Unemp1948}\FloatTok{.2021}\OperatorTok{$}\NormalTok{UNRATE,}\DataTypeTok{main =} \StringTok{"acf plot"}\NormalTok{)}
+\KeywordTok{pacf}\NormalTok{(Unemp1948}\FloatTok{.2021}\OperatorTok{$}\NormalTok{UNRATE,}\DataTypeTok{main =} \StringTok{" PACF"}\NormalTok{)}
+\NormalTok{data =}\StringTok{ }\NormalTok{Unemp1948}\FloatTok{.2021}\OperatorTok{$}\NormalTok{UNRATE}
+\NormalTok{AR1 =}\StringTok{ }\KeywordTok{arima}\NormalTok{(data,}\DataTypeTok{order =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{))}
+\NormalTok{AR2 =}\StringTok{ }\KeywordTok{arima}\NormalTok{(data,}\DataTypeTok{order =} \KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{))}
+\NormalTok{AR3 =}\StringTok{ }\KeywordTok{arima}\NormalTok{(data,}\DataTypeTok{order =} \KeywordTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{))}
+\NormalTok{AR4 =}\StringTok{ }\KeywordTok{arima}\NormalTok{(data,}\DataTypeTok{order =} \KeywordTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{))}
+\NormalTok{AR5 =}\StringTok{ }\KeywordTok{arima}\NormalTok{(data,}\DataTypeTok{order =} \KeywordTok{c}\NormalTok{(}\DecValTok{5}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{))}
+\NormalTok{AR6 =}\StringTok{ }\KeywordTok{arima}\NormalTok{(data,}\DataTypeTok{order =} \KeywordTok{c}\NormalTok{(}\DecValTok{6}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{))}
+\NormalTok{aic_table =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(AR1}\OperatorTok{$}\NormalTok{aic,AR2}\OperatorTok{$}\NormalTok{aic,AR3}\OperatorTok{$}\NormalTok{aic,AR4}\OperatorTok{$}\NormalTok{aic,AR5}\OperatorTok{$}\NormalTok{aic,AR6}\OperatorTok{$}\NormalTok{aic)}
+\NormalTok{aic_table}
+\CommentTok{# choose AR 1 because smallest AIC value}
+\NormalTok{AR1}
+\NormalTok{AR1}\OperatorTok{$}\NormalTok{coef}
+\NormalTok{residual_plot =}\StringTok{ }\KeywordTok{plot}\NormalTok{(AR1}\OperatorTok{$}\NormalTok{residuals) }\CommentTok{# residuals}
+\KeywordTok{acf}\NormalTok{(AR1}\OperatorTok{$}\NormalTok{residuals, }\DataTypeTok{main =} \StringTok{" acf plot of residuals"}\NormalTok{)}
+\NormalTok{test <-}\StringTok{ }\KeywordTok{Box.test}\NormalTok{(AR1}\OperatorTok{$}\NormalTok{residuals, }\DataTypeTok{lag =} \DecValTok{10}\NormalTok{, }\DataTypeTok{type =} \StringTok{"Ljung-Box"}\NormalTok{)}
+\NormalTok{test}
+\CommentTok{# We do not rehect the null hypothesis that residuals are i.i.d. or all the aurocorrelations are zero.}
+\NormalTok{newdata =}\StringTok{ }\NormalTok{Unemp1948}\FloatTok{.2021}\OperatorTok{$}\NormalTok{UNRATE[}\DecValTok{1}\OperatorTok{:}\DecValTok{72}\NormalTok{]}
+\NormalTok{newdata}
+\NormalTok{ARn1  =}\StringTok{ }\KeywordTok{arima}\NormalTok{(newdata,}\DataTypeTok{order =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{))}
+\NormalTok{ARn2  =}\StringTok{ }\KeywordTok{arima}\NormalTok{(newdata,}\DataTypeTok{order =} \KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{))}
+\NormalTok{ARn3  =}\StringTok{ }\KeywordTok{arima}\NormalTok{(newdata,}\DataTypeTok{order =} \KeywordTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{))}
+\NormalTok{ARn4  =}\StringTok{ }\KeywordTok{arima}\NormalTok{(newdata,}\DataTypeTok{order =} \KeywordTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{))}
+\NormalTok{ARn5  =}\StringTok{ }\KeywordTok{arima}\NormalTok{(newdata,}\DataTypeTok{order =} \KeywordTok{c}\NormalTok{(}\DecValTok{5}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{))}
+\NormalTok{ARn6  =}\StringTok{ }\KeywordTok{arima}\NormalTok{(newdata,}\DataTypeTok{order =} \KeywordTok{c}\NormalTok{(}\DecValTok{6}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{))}
+\NormalTok{aic_table2 =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(ARn1}\OperatorTok{$}\NormalTok{aic,ARn2}\OperatorTok{$}\NormalTok{aic,ARn3}\OperatorTok{$}\NormalTok{aic,ARn4}\OperatorTok{$}\NormalTok{aic,ARn5}\OperatorTok{$}\NormalTok{aic,ARn6}\OperatorTok{$}\NormalTok{aic)}
+\NormalTok{aic_table2}
+\CommentTok{# we choose AR2 now because smallest aic value}
+\NormalTok{ARn2}\OperatorTok{$}\NormalTok{coef}
+\NormalTok{u =}\StringTok{ }\KeywordTok{mean}\NormalTok{(newdata)}
+\KeywordTok{library}\NormalTok{(stargazer)}
+\KeywordTok{stargazer}\NormalTok{(AR1,ARn2,}\DataTypeTok{type =} \StringTok{"text"}\NormalTok{)}
+\NormalTok{forecast_}\DecValTok{2020}\NormalTok{ =}\StringTok{ }\FloatTok{0.9927} \OperatorTok{*}\StringTok{ }\NormalTok{(newdata[}\DecValTok{72}\NormalTok{]}\OperatorTok{-}\NormalTok{u) }\OperatorTok{-}\StringTok{ }\FloatTok{0.2691} \OperatorTok{*}\StringTok{ }\NormalTok{(newdata[}\DecValTok{71}\NormalTok{] }\OperatorTok{-}\StringTok{ }\NormalTok{u) }\OperatorTok{+}\StringTok{ }\NormalTok{u}
+\NormalTok{forecast_}\DecValTok{2020}
+\NormalTok{forecast_}\DecValTok{2021}\NormalTok{ =}\StringTok{ }\FloatTok{0.9927} \OperatorTok{*}\StringTok{ }\NormalTok{(forecast_}\DecValTok{2020}\OperatorTok{-}\NormalTok{u) }\FloatTok{-0.2691} \OperatorTok{*}\StringTok{ }\NormalTok{(newdata[}\DecValTok{72}\NormalTok{] }\OperatorTok{-}\StringTok{ }\NormalTok{u) }\OperatorTok{+}\StringTok{ }\NormalTok{u}
+\NormalTok{forecast_}\DecValTok{2021}
+\KeywordTok{predict}\NormalTok{(ARn2,}\DataTypeTok{n.ahead =} \DecValTok{1}\NormalTok{)}
+\KeywordTok{predict}\NormalTok{(ARn2,}\DataTypeTok{n.ahead =} \DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\end{document}
